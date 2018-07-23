@@ -1,3 +1,3 @@
 console.log('---')
 
-document.write('yesdddd')
+document.write('yesddxiyuandd')

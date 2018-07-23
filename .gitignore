@@ -16,3 +16,6 @@ selenium-debug.log
 *.njsproj
 *.sln
 .project
+
+# package
+# autoprefixer babel-core babel-eslint babel-loader babel-plugin-syntax-jsx babel-plugin-transform-runtime babel-plugin-transform-vue-jsx babel-preset-env babel-preset-stage-2 chalk copy-webpack-plugin css-loader extract-text-webpack-plugin  file-loader friendly-errors-webpack-plugin html-webpack-plugin less less-loader node-notifier optimize-css-assets-webpack-plugin ora portfinder postcss-import postcss-loader postcss-url rimraf semver  shelljs uglifyjs-webpack-plugin url-loader webpack webpack-bundle-analyzer webpack-cli webpack-dev-middleware webpack-dev-server webpack-merge
