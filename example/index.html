@@ -5,7 +5,18 @@
     <title>Title</title>
 </head>
 <body>
-<!--<script type="text/javascript" src="../src/inside/utils/HTML2VDom.js"></script>-->
-<!--<script type="text/javascript" src="./main.js"></script>-->
+<script type="text/vf-template">
+    <div>
+        <block name="nav">
+            <div>菜单</div>
+        </block>
+        <block @:name="main">
+            <div>内容体</div>
+        </block>
+        <for exp="(item,key) in list">
+
+        </for>
+    </div>
+</script>
 </body>
 </html>

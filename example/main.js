@@ -1,3 +1,7 @@
-console.log('---')
+import HTML2VDom from '../src/inside/utils/HTML2VDom';
 
-document.write('yesddxiyuandd')
+window.onload=function () {
+	let template=document.querySelector('script[type="text/vf-template"]').innerHTML;
+	
+	console.log(HTML2VDom(template));
+}
