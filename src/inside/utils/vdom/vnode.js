@@ -1,20 +1,29 @@
-
-
-
 //虚拟节点对象
 class $vnode {
 	// 构造函数
 	constructor(conf) {
-		//配置继承
+		// 配置属性继承
 		Object.keys(conf).forEach(key => {
 			this[key] = conf[key];
 		})
+		
+		// 给子元素关联父元素
+		this.resetChildrenParent();
+		
 	}
 	
 	// 节点克隆
 	clone() {
 	
 	}
+	
+	// 给子级元素关联父元素
+	resetChildrenParent(){
+		(this.children||[]).forEach(vnode=>{
+			vnode.parentVnode=this;
+		})
+	}
+	
 	
 	// 节点销毁
 	destroy() {
@@ -25,7 +34,7 @@ class $vnode {
 
 
 //虚拟节点构造
-export default function vnode(tag, data, children, text, elm) {
+export default function vnode(tag, data, children, text, elm, callbackFn) {
 	
 	var key = data === undefined ? undefined : data.key;
 	var conf = {
@@ -47,5 +56,9 @@ export default function vnode(tag, data, children, text, elm) {
 		parentVnode: null
 	};
 	
-	return new $vnode(conf);
+	const Vnode = new $vnode(conf);
+	
+	typeof callbackFn === "function" && callbackFn(Vnode);
+	
+	return Vnode;
 }
