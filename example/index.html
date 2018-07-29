@@ -10,8 +10,8 @@
         <block name="nav">
             <div>菜单</div>
         </block>
-        <block @:name="main">
-            <div>内容体</div>
+        <block @:name.min="main" name="xiyuan">
+            <div>内容体{{name}}</div>
         </block>
         <for exp="(item,key) in list">
 

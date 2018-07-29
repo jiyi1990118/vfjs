@@ -51,7 +51,7 @@ export default function vnode(tag, data, children, text, elm, callbackFn) {
 		// 上下文环境 ( 模型数据、过滤器、组件、指令、动态计算属性 )
 		environment: {},
 		// 子Vdom
-		children: children,
+		children: children||[],
 		// 父虚拟节点
 		parentVnode: null
 	};

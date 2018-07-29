@@ -4,8 +4,14 @@ import HTMLParser from './HTMLParser';
 // 字符串处理包
 import string from '../lib/string';
 
+// 语法解析
+import syntaxTree from './syntaxTree';
+
 // 虚拟Dom包
 import vdom from './vdom';
+
+// 日志包
+import log from './log';
 
 /**
  * html字符串转虚拟dom
@@ -13,9 +19,10 @@ import vdom from './vdom';
  * @returns {Array}
  */
 function str2vdom(htmlStr) {
-	var nowStruct,
-		eleStruct = [],
-		structLevel = [];
+	const eleStruct = [];
+	
+	let nowStruct;
+	let structLevel = [];
 	
 	HTMLParser(string.HTMLDecode(htmlStr), {
 		//标签节点起始
@@ -24,45 +31,52 @@ function str2vdom(htmlStr) {
 				tagName,
 				{
 					attrsMap: attrs.reduce(function (attrs, current) {
-						var type,
-							localtion,
-							modifiers,
-							attrName = current.name;
 						
-						//获取自定义属性的类型
-						if ((localtion = attrName.indexOf(':')) !== -1) {
-							type = attrName.slice(localtion + 1);
-							attrName = attrName.slice(0, localtion) || 'bind';
-							//获取修饰符
-							if ((localtion = type.indexOf('.')) !== -1) {
-								modifiers = type.slice(localtion + 1);
-								type = type.slice(0, localtion);
-								modifiers = modifiers.split('.')
-							}
-						} else {
-							//获取修饰符
-							if ((localtion = attrName.indexOf('.')) !== -1) {
-								modifiers = attrName.slice(localtion + 1);
-								attrName = attrName.slice(0, localtion);
-								modifiers = modifiers.split('.')
-							}
+						// 修饰符
+						const modifier = current.name.split('.');
+						
+						// 属性名称
+						const attrName = modifier.shift();
+						
+						// 属性名称
+						const attrInfo = {
+							fullName: current.name,
+							name: attrName,
+							value: current.value,
+							type: modifier.shift(),
+							modifier: modifier
 						}
 						
-						if (attrs[attrName] && type) {
-							attrs[attrName] = [{
-								type: type,
-								modifiers: modifiers,
-								value: current.value,
-								attrName: current.name
-							}].concat(attrs[attrName]);
+						// 检查是是双向属性
+						if (attrName.substr(0, 2) === '@:') {
+							attrInfo.name = attrName.slice(2);
+							
+							// 标识 内外属性
+							attrInfo.isInner = true;
+							attrInfo.isOuter = true;
 						} else {
-							attrs[attrName] = {
-								type: type,
-								modifiers: modifiers,
-								value: current.value,
-								attrName: current.name
-							};
+							switch (attrName.charAt(0)) {
+								case '@':
+									// 标识由内向外传递
+									attrInfo.isInner = true;
+									attrInfo.name = attrName.slice(1);
+									break;
+								case ':':
+									// 标识由外向内传递
+									attrInfo.isOuter = true;
+									attrInfo.name = attrName.slice(1);
+									break;
+							}
+							
 						}
+						
+						// 检查同元素上是否由同样的属性
+						if (attrs[attrInfo.name]) {
+							log.warn('同元素上 ' + attrInfo.name + ' 属性已经被定义过 [ ' + attrs[attrInfo.name].fullName + ' = "' + attrs[attrInfo.name].value + '" ]')
+						}
+						
+						attrs[attrInfo.name] = attrInfo;
+						
 						return attrs;
 					}, {})
 				},
@@ -77,7 +91,7 @@ function str2vdom(htmlStr) {
 		//标签节点结束
 		end: function () {
 			//前一个元素结构
-			var parentStruct = structLevel.pop();
+			let parentStruct = structLevel.pop();
 			
 			//检查当前是否顶级层级
 			if (structLevel.length) {
@@ -101,12 +115,15 @@ function str2vdom(htmlStr) {
 			
 			//获取界定符位置
 			//界定符
-			var DelimiterLeft = "{{",
+			const DelimiterLeft = "{{",
 				DelimiterRight = "}}";
 			
-			var exps = [],
+			// 文本表达式容器
+			let exps = [],
+				// 常规文本容器
 				strs = [],
-				expStr;
+				// 标识是否存在表达式
+				existExp=false;
 			
 			/**
 			 * 获取表达式
@@ -114,37 +131,42 @@ function str2vdom(htmlStr) {
 			 * @returns {*}
 			 */
 			(function findExp(text) {
-				var sid,
+				let sid,
 					eid,
-					_str,
-					str = text;
+					str;
 				
-				if (str.length) {
-					if ((sid = str.indexOf(DelimiterLeft)) === -1 || (eid = str.indexOf(DelimiterRight, sid)) === -1) {
-						exps.push(str);
-						strs.push(str);
+				if (text.length) {
+					
+					// 检查是否存在表达式界定符号
+					if ((sid = text.indexOf(DelimiterLeft)) === -1 || (eid = text.indexOf(DelimiterRight, sid)) === -1) {
+						exps.push(text);
+						strs.push(text);
 					} else {
 						if (sid) {
-							_str = str.slice(0, sid);
-							exps.push(_str);
-							strs.push(_str);
+							str = text.slice(0, sid);
+							exps.push(str);
+							strs.push(str);
 						}
+						// 标识存在表达式
+						existExp=true;
 						//截取界定符中的表达式字符
-						expStr = str.slice(sid + DelimiterLeft.length).slice(0, eid - sid - DelimiterLeft.length);
+						const expStr = text.slice(sid + DelimiterLeft.length).slice(0, eid - sid - DelimiterLeft.length);
+						
+						const syntaxStruct=syntaxTree(expStr);
 						//解析表达式
-						exps.push(syntaxStruct(expStr));
+						exps.push(syntaxStruct);
 						//剩下的字符
-						findExp(str.slice(eid + DelimiterRight.length));
+						findExp(text.slice(eid + DelimiterRight.length));
 					}
 				}
 				return text;
 			})(text)
 			
-			var nowStruct = vdom.vnode(
+			const nowStruct = vdom.vnode(
 				undefined,
 				{
-					exps: exps,
-					textExpString: expStr
+					textExp: exps,
+					existExp:existExp,
 				},
 				undefined,
 				strs.join('')
