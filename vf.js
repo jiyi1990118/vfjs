@@ -12,6 +12,14 @@ const template = `
   
     <div :if="$data.switch">
   
+            // 直接渲染处理
+            {{ 5 + getName }}
+
+            // 等待处理 (需所有值都加载完毕后处理)
+            {{await 5 + getName }}
+
+            // 异步处理 (得到即处理)
+            {{async 5 + getName() }}
     </div>
     {{$computed.testData}}
     <div :if="$methods.switch(switch)">
@@ -112,6 +120,12 @@ export default {
 			this.setProperty('value', data);
 			// 调度自定义事件
 			this.dispatchEvent('change', data)
+			
+			const promise = new Promise(function(resolve, reject) {
+				resolve(value);
+			});
+			
+			return promise;
 		},
 		// 自定义渲染方法
 		render() {

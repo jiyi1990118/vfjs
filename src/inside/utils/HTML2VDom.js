@@ -5,7 +5,7 @@ import HTMLParser from './HTMLParser';
 import string from '../lib/string';
 
 // 语法解析
-import syntaxTree from './syntaxTree';
+import syntaxTree from './abstractSyntaxTree';
 
 // 虚拟Dom包
 import vdom from './vdom';
