@@ -41,11 +41,11 @@ export default function (expression) {
 		// 只对成员数据有效
 		if ('delete' === id) {
 			if (expType !== 'MemberExpression'){
-				return this.throwErr('delete 语法错误！',{start:this.expStruct.start -1});
+				return this.throwErr('delete 语法错误！',this.expStruct);
 			}
 		}else if( 'new' === id){
 			if('CallExpression' !== expType && atomType.identifier !== expType ){
-				return this.throwErr('new 语法错误！',{start:this.expStruct.start -1});
+				return this.throwErr('new 语法错误！',this.expStruct);
 			}
 		}
 		

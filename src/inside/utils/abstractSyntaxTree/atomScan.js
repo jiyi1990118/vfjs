@@ -58,6 +58,10 @@ export default function (scan) {
 			// 布尔值
 		} else if (id === 'true' || id === 'false') {
 			type = atomType.Boolean;
+			// 检查是否有解析声明
+		} else if (!this.preAtom && (id === 'async' || id === 'await') && strGate.isWhiteSpace(nowStr)) {
+			this.mode = id;
+			return this.expressionLex();
 			// 标识符
 		} else {
 			type = atomType.identifier;
