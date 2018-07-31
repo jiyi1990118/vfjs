@@ -1041,3 +1041,5 @@ Driven.prototype = {
         return mergeInstance;
     }
 };
+
+export default Driven;

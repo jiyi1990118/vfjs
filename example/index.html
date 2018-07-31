@@ -10,15 +10,17 @@
         <block name="nav">
             <div>菜单</div>
         </block>
-        <block @:name.min="main" name="xiyuan">
-            <div>内容体</div>
+        <block &:name.min="list" >
+            <div @click="main($,name)">内容体 {{name='xiyuan'}}</div>
         </block>
         <for exp="(item,key) in list">
-            {{ await userName?xiyuan:5>2?'xjw':'xxy'}}
-            new delete
-
+            {{ await userName?xiyuan:5>2?xjw:xxy }}
+            {{ async delete userInfo.age,1+3 }}
         </for>
     </div>
+</script>
+
+<script type="text/javascript">
 </script>
 </body>
 </html>

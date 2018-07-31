@@ -18,6 +18,9 @@ import strGate from './strGate';
 // 语法原子类型
 import atomType from './atomType';
 
+// 获取语法输出数据类型
+import getOutExpType from './getOutExpType';
+
 // 语法解析
 function syntaxParserClass(code) {
 	// 代码资源
@@ -50,7 +53,15 @@ function syntaxParserClass(code) {
 	
 	// 检查语法是否完整
 	if (this.expBlockEnd.length && !this.errMsg) {
+		this.expStruct=null;
 		this.throwErr('表达式不完整缺少' + this.expBlockEnd.length + '个闭合符号 ' + this.expBlockEnd.join(' , '))
+	} else if (this.expStruct) {
+		// 语法信息
+		this.expStruct.info = Object.assign({
+			// 标识语法解析模式
+			mode:this.mode
+			// 获取输出的表达式信息
+		},getOutExpType(this.expStruct))
 	}
 };
 
@@ -513,8 +524,6 @@ export default function syntaxParser(code) {
 	if (!syntaxStruct) {
 		// 无缓存则解析，并放入缓存
 		syntaxStruct = new syntaxParserClass(code);
-		// 标识语法解析模式
-		syntaxStruct.expStruct.mode = syntaxStruct.mode;
 		syntaxCache[code] = syntaxStruct.expStruct;
 		
 		// 销毁对象
