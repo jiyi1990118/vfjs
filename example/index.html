@@ -10,8 +10,8 @@
         <block name="nav">
             <div>菜单</div>
         </block>
-        <block &:name.min="list" >
-            <div @click="main($,name)">内容体 {{name='xiyuan'}}</div>
+        <block &:name.min="list">
+            <div @click="main($event,name)">内容体 {{name='xiyuan'}}</div>
         </block>
         <for exp="(item,key) in list">
             {{ await userName?xiyuan:5>2?xjw:xxy }}

@@ -288,9 +288,17 @@ syntaxParserClass.prototype.expressionLex = function (atom, isAdopt) {
 						// 右括号
 						case "bracketsRight":
 							// 检查是否能匹配语法块结束符号
-							if (this.expBlockEnd.length && this.expBlockEnd.pop() === atom.value) {
-								this.args = this.levelArgs.pop();
-								break;
+							if (this.expBlockEnd.length ) {
+								let symbol=this.expBlockEnd.concat().pop();
+								if(this.expBlockEnd.pop() === atom.value){
+									this.args = this.levelArgs.pop();
+									break;
+									// 检查是否三元表达式
+								}else if(symbol === ':'){
+									brackets = atom.value;
+									this.index--;
+									break
+								}
 							}
 						default:
 							this.throwErr('语法错误,多出符号"' + atom.value + '"');

@@ -11,7 +11,7 @@ const template = `
   </for>
   
     <div :if="$data.switch">
-  
+  {{keyExpression['name']['xiyuan'].sort()}}
             // 直接渲染处理
             {{ 5 + getName }}
 
@@ -172,7 +172,7 @@ export default {
 	computed: {
 		testData: {
 			// 依赖的数据
-			depend: ['name'],
+			depend: ['name','userInfo.age'],
 			export() {
 			
 			}

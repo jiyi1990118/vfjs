@@ -8,6 +8,7 @@ function getOutExpType(syntaxStruct, outExpInfo) {
 		// 是否可写
 		canWrite: true,
 	};
+	if (!syntaxStruct) return outExpInfo;
 	
 	switch (syntaxStruct.exp) {
 		//三元表达式

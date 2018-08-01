@@ -3,5 +3,162 @@ import HTML2VDom from '../src/inside/utils/HTML2VDom';
 window.onload=function () {
 	let template=document.querySelector('script[type="text/vf-template"]').innerHTML;
 	
+	template=`<template :test="{opacity:newBatchInfo.loading?0:1}" :class="{red:color|:fl($)}">
+    <div>
+        <ul>
+            <li for="(info,index) in userList" :ref="'user-list-'+index">{{info.name}}</li>
+        </ul>
+        <userAge info="userAgeSort" ref="userAge">
+            <div slot="content" slot-scope="userAge" ref="userAgeSlot">{{userAge}}</div>
+        </userAge>
+        <form>
+            <ul>
+                <li>
+                    <input type="text" name="name" :value="userInfo.name" model="userInfo.name">
+                </li>
+                <li>
+                    <input type="text" name="age" :value="userInfo.age" model="userInfo.age">
+                </li>
+            </ul>
+        </form>
+        <button @click="$methods.addUser(userInfo,$event)">add</button>
+    </div>
+</template>
+
+<script>
+
+    // 引入数据观察工具
+    import observe from '../src/inside/utils/observe';
+
+    const userStorage=new observe({});
+
+	export default {
+		name: '',
+		// 属性声明
+		property: {
+			list: {
+				// 数据类型
+				type: Array,
+				// 默认值
+				value: [],
+				// 内部值转换
+				transfer: 'userList',
+				// 值观察
+				watch: function (newData, oldData) {
+
+				}
+			}
+		},
+		// 内部数据容器
+		data: function () {
+            return {
+            	// 模拟数据模型中传递数据
+	            modelData: userStorage.getSource(),
+	            userInfo: null,
+            }
+		},
+		// 内部方法
+		methods: {
+			// 新增数据
+			addUser(userInfo) {
+				this.data.userList.push(userInfo);
+				// 设置更新数据
+				this.setData({
+					userInfo: null,
+					userList: this.data.userList
+				})
+				// 对外进行传递
+				this.setProperty('list', this.data.userList);
+			},
+
+			// 内部提供的方法
+			send(data) {
+				// 设置属性对应的外部值
+				this.setProperty('value', data);
+				// 调度自定义事件
+				this.dispatchEvent('change', data)
+				// 验证支持promise
+				const promise = new Promise((resolve, reject) => {
+					this.data.userList.length ? resolve(data) : reject(false);
+				});
+
+				return promise;
+			},
+		},
+		// 动态计算
+		computed: {
+			userAgeSort: {
+				// 依赖的数据 (用户列表)
+				depend: ['userList'],
+				export(userList) {
+					// 验证可以支持promise
+					const promise = new Promise((resolve, reject) => {
+						this.data.userList.length ? resolve(userList.sort(function (pre, next) {
+							return pre.age - next.age;
+						}).join('=>')) : reject('空列表');
+					});
+					return promise
+				}
+			}
+		},
+		// 对外提供的接口
+		interface: {},
+		// 组件
+		components: {},
+		// 指令
+		directives: {},
+		// 过滤器
+		filters: {},
+		// 生命周期钩子
+		hooks: {
+			// 创建之前
+			berforCreate() {
+
+			},
+			// 创建之后
+			created() {
+
+			},
+			// 挂载之前
+			berforMount() {
+
+			},
+			// 挂载之后
+			mounted() {
+
+			},
+			// 更新之前
+			berforUpdate() {
+
+			},
+			// 更新之后
+			updated() {
+
+			},
+			// 销毁之前
+			berforDestroy() {
+
+			},
+			// 销毁之后
+			destroyed() {
+
+			}
+		},
+		watch: {
+			userList: function () {
+				// 获取组件对外提供的接口/元素Dom
+				this.getRef('userAge');
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+
+</style>
+	
+	`
+	console.time();
 	console.log(HTML2VDom(template));
+	console.timeEnd();
 }

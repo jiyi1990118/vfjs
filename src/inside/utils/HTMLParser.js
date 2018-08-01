@@ -134,7 +134,9 @@ export default (function () {
 		
 		function parseStartTag(tag, tagName, rest, unary) {
 			var casePreservedTagName = tagName;
-			tagName = tagName.toLowerCase();
+			
+			// 关闭大小写转换 （避免模板中驼峰标签解析失败）
+			// tagName = tagName.toLowerCase();
 			
 			if (block[tagName]) {
 				while (lastTag && inline[lastTag]) {
