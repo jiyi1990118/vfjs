@@ -1,9 +1,9 @@
-import HTML2VDom from '../src/inside/utils/HTML2VDom';
+import {parse} from '../src/inside/utils/vf';
 
-window.onload=function () {
-	let template=document.querySelector('script[type="text/vf-template"]').innerHTML;
+window.onload = function () {
+	let template = document.querySelector('script[type="text/vf-template"]').innerHTML;
 	
-	template=`<template :test="{opacity:newBatchInfo.loading?0:1}" :class="{red:color|:fl($)}">
+	template = `<template :test="{opacity:newBatchInfo.loading?0:1}" :class="{red:color|:fl($)}">
     <div>
         <ul>
             <li for="(info,index) in userList" :ref="'user-list-'+index">{{info.name}}</li>
@@ -155,10 +155,13 @@ window.onload=function () {
 
 <style lang="scss" scoped>
 
+.a{
+
+}
 </style>
 	
 	`
 	console.time();
-	console.log(HTML2VDom(template));
+	console.log(parse(template));
 	console.timeEnd();
 }

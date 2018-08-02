@@ -20,7 +20,7 @@
     </div>
 </template>
 
-<script>
+<script type="text/javascript">
 
     // 引入数据观察工具
     import observe from '../src/inside/utils/observe';
@@ -149,5 +149,7 @@
 </script>
 
 <style lang="scss" scoped>
+.a{
 
+}
 </style>

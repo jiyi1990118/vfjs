@@ -16,17 +16,20 @@ import log from './log';
 /**
  * html字符串转虚拟dom
  * @param htmlStr
+ * @param mode 解析模式
  * @returns {Array}
  */
-function str2vdom(htmlStr) {
+function str2vdom(htmlStr, mode) {
 	const eleStruct = [];
 	
 	let nowStruct;
+	// 层级容器
 	let structLevel = [];
 	
 	HTMLParser(string.HTMLDecode(htmlStr), {
 		// 标签节点起始
 		start: function (tagName, attrs, unary) {
+			
 			nowStruct = vdom.vnode(
 				tagName,
 				{
@@ -150,43 +153,47 @@ function str2vdom(htmlStr) {
 				// 标识是否存在表达式
 				existExp = false;
 			
-			/**
-			 * 获取表达式
-			 * @param text
-			 * @returns {*}
-			 */
-			(function findExp(text) {
-				let sid,
-					eid,
-					str;
+			// 检查解析模式，vf 模式 只有template可解析语法
+			if(mode !=='vf' || structLevel[0].tag === 'template'){
 				
-				if (text.length) {
+				/**
+				 * 获取表达式
+				 * @param text
+				 * @returns {*}
+				 */
+				(function findExp(text) {
+					let sid,
+						eid,
+						str;
 					
-					// 检查是否存在表达式界定符号
-					if ((sid = text.indexOf(DelimiterLeft)) === -1 || (eid = text.indexOf(DelimiterRight, sid)) === -1) {
-						exps.push(text);
-						strs.push(text);
-					} else {
-						if (sid) {
-							str = text.slice(0, sid);
-							exps.push(str);
-							strs.push(str);
+					if (text.length) {
+						
+						// 检查是否存在表达式界定符号
+						if ((sid = text.indexOf(DelimiterLeft)) === -1 || (eid = text.indexOf(DelimiterRight, sid)) === -1) {
+							exps.push(text);
+							strs.push(text);
+						} else {
+							if (sid) {
+								str = text.slice(0, sid);
+								exps.push(str);
+								strs.push(str);
+							}
+							// 标识存在表达式
+							existExp = true;
+							// 截取界定符中的表达式字符
+							const expStr = text.slice(sid + DelimiterLeft.length).slice(0, eid - sid - DelimiterLeft.length);
+							
+							const syntaxStruct = syntaxTree(expStr);
+							
+							// 解析表达式
+							exps.push(syntaxStruct);
+							// 剩下的字符
+							findExp(text.slice(eid + DelimiterRight.length));
 						}
-						// 标识存在表达式
-						existExp = true;
-						// 截取界定符中的表达式字符
-						const expStr = text.slice(sid + DelimiterLeft.length).slice(0, eid - sid - DelimiterLeft.length);
-						
-						const syntaxStruct = syntaxTree(expStr);
-						
-						// 解析表达式
-						exps.push(syntaxStruct);
-						// 剩下的字符
-						findExp(text.slice(eid + DelimiterRight.length));
 					}
-				}
-				return text;
-			})(text)
+					return text;
+				})(text)
+			}
 			
 			const nowStruct = vdom.vnode(
 				undefined,
@@ -195,7 +202,7 @@ function str2vdom(htmlStr) {
 					existExp: existExp,
 				},
 				undefined,
-				strs.join('')
+				strs.join('')||text
 			)
 			
 			// 检查当前是否顶级层级
@@ -212,8 +219,11 @@ function str2vdom(htmlStr) {
 
 /**
  * html 转换成虚拟dom数据结构
+ * @param html
+ * @param mode
+ * @returns {Array}
  */
-export default function (html) {
+export default function (html, mode) {
 	// 检查是否dom节点
-	return html.nodeName ? vdom.node2vnode(html) : str2vdom(html);
+	return html.nodeName ? vdom.node2vnode(html, mode) : str2vdom(html, mode);
 };
