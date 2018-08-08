@@ -49,7 +49,7 @@ export default function vnode(tag, data, children, text, elm, callbackFn) {
 		// 数据容器
 		data: data || {},
 		// 上下文环境 ( 模型数据、过滤器、组件、指令、动态计算属性 )
-		environment: {},
+		context: {},
 		// 子Vdom
 		children: children||[],
 		// 父虚拟节点

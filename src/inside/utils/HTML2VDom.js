@@ -30,9 +30,9 @@ function str2vdom(htmlStr, mode) {
 		// 标签节点起始
 		start: function (tagName, attrs, unary) {
 			
-			nowStruct = vdom.vnode(
-				tagName,
-				{
+			nowStruct = {
+				tag: tagName,
+				data: {
 					attrsMap: attrs.reduce(function (attrs, current) {
 						
 						// 修饰符
@@ -108,8 +108,8 @@ function str2vdom(htmlStr, mode) {
 						return attrs;
 					}, {})
 				},
-				[]
-			)
+				children:[]
+			}
 			
 			structLevel.push(nowStruct)
 			if (unary) {
@@ -154,7 +154,7 @@ function str2vdom(htmlStr, mode) {
 				existExp = false;
 			
 			// 检查解析模式，vf 模式 只有template可解析语法
-			if(mode !=='vf' || structLevel[0].tag === 'template'){
+			if (mode !== 'vf' || structLevel[0].tag === 'template') {
 				
 				/**
 				 * 获取表达式
@@ -195,15 +195,14 @@ function str2vdom(htmlStr, mode) {
 				})(text)
 			}
 			
-			const nowStruct = vdom.vnode(
-				undefined,
-				{
+			const nowStruct = {
+				tag: undefined,
+				data: {
 					textExp: exps,
 					existExp: existExp,
 				},
-				undefined,
-				strs.join('')||text
-			)
+				text: strs.join('') || text
+			}
 			
 			// 检查当前是否顶级层级
 			if (structLevel.length) {
