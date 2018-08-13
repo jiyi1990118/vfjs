@@ -50,17 +50,16 @@ module.exports = function(source) {
 	const context = rootContext || process.cwd()
 	// 获取被解析的资源目录
 	const sourceRoot = path.dirname(path.relative(context, resourcePath))
-	
-	
-	console.log(compilerParse({
+	// 组件编译信息
+	const compilerInfo=compilerParse({
 		source,
 		parse,
 		filename,
 		sourceRoot,
 		needMap: sourceMap
-	}))
+	});
 	
-	this.callback(null,`export default {}`)
+	this.callback(null,`export default ${JSON.stringify(compilerInfo)}`)
 };
 
 module.exports.raw = false;

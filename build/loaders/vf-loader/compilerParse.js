@@ -48,12 +48,12 @@ module.exports = function compilerParse(options) {
 	// 检查是否需要开启sourceMap
 	if (needMap) {
 		if (output.script && !output.script.src) {
-			// output.script.map = generateSourceMap(filename, source, output.script.content, sourceRoot);
+			output.script.map = generateSourceMap(filename, source, output.script.code, sourceRoot);
 		}
 		if (output.styles) {
 			output.styles.forEach(style => {
 				if (!style.src) {
-					// style.map = generateSourceMap(filename, source, style.content, sourceRoot);
+					style.map = generateSourceMap(filename, source, style.code, sourceRoot);
 				}
 			});
 		}

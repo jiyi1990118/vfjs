@@ -27,14 +27,14 @@ module.exports = function (pageStr) {
 				pageModelInfo.styles.push({
 					lang: attrsMap.lang ? attrsMap.lang.value : 'css',
 					scoped: !!attrsMap.scoped,
-					style: children[0] ? children[0].text : ''
+					code: children[0] ? children[0].text : ''
 				});
 				break;
 			case 'script':
 				// 序列化脚本数据结构
 				pageModelInfo.script = {
 					type: attrsMap.type ? attrsMap.type.value.replace(/^text\//i, '') : 'javascript',
-					script: children[0] ? children[0].text : ''
+					code: children[0] ? children[0].text : ''
 				};
 				break;
 			case 'template':
