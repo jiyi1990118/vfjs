@@ -1,5 +1,5 @@
 
-export default {
+module.exports =  {
 	createElement: function createElement(tagName) {
 		return document.createElement(tagName);
 	},

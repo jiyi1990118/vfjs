@@ -4,7 +4,7 @@
 "use strict";
 
 
-export default {
+module.exports = {
 //把字符串解析成对象
 	parse(str) {
 		if (typeof (str) === 'object') {

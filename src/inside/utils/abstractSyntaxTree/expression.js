@@ -1,5 +1,5 @@
 // 语法原子类型
-import atomType from './atomType';
+const atomType = require('./atomType');
 
 /*
  * UnaryExpression 一元表达式
@@ -15,7 +15,7 @@ import atomType from './atomType';
  * */
 
 //表达式规则
-export default function (expression) {
+module.exports = function (expression) {
 	
 	//一元表达式
 	expression.expUnary = function (atom, expTemp) {
@@ -40,12 +40,12 @@ export default function (expression) {
 		// 特殊一元运算标识 （对指定类型数据有效）
 		// 只对成员数据有效
 		if ('delete' === id) {
-			if (expType !== 'MemberExpression'){
-				return this.throwErr('delete 语法错误！',this.expStruct);
+			if (expType !== 'MemberExpression') {
+				return this.throwErr('delete 语法错误！', this.expStruct);
 			}
-		}else if( 'new' === id){
-			if('CallExpression' !== expType && atomType.identifier !== expType ){
-				return this.throwErr('new 语法错误！',this.expStruct);
+		} else if ('new' === id) {
+			if ('CallExpression' !== expType && atomType.identifier !== expType) {
+				return this.throwErr('new 语法错误！', this.expStruct);
 			}
 		}
 		

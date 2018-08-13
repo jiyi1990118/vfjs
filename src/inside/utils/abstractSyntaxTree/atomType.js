@@ -1,5 +1,5 @@
 // 语法原子类型
-export default {
+module.exports = {
 	//空
 	Null: 'Null',
 	//字符

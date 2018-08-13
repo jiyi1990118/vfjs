@@ -1,4 +1,4 @@
-export default (function () {
+module.exports = (function () {
 	// Regular Expressions for parsing tags and attributes
 	var startTag = /^<([-\w:]+)((?:\s+[^\s\/>"'=]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*>/,
 		endTag = /^<\/([-\w:]+)[^>]*>/,

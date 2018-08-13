@@ -1178,4 +1178,4 @@ function parse(ua) {
     return platform;
 }
 
-export default parse();
+module.exports = parse();

@@ -1,3 +1,3 @@
-import parse from './parse';
+const parse = require('./parse');
 
-export {parse};
+module.exports = {parse};

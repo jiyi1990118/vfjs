@@ -4,21 +4,16 @@
  */
 "use strict";
 
-import vnode from './vnode'
+const vnode = require('./vnode')
 
-import toVNode from './toVNode'
+const toVNode = require('./toVNode')
 
-import htmlDomApi from './htmlDomApi'
-
-
+const htmlDomApi = require('./htmlDomApi')
 
 // 空节点
 const emptyNode = vnode('', {}, [], undefined, undefined);
 
-
-
-
-export default {
+module.exports = {
 	// 虚拟节点创建
 	vnode: vnode,
 	// dom节点转虚拟节点

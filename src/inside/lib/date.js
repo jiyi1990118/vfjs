@@ -142,7 +142,7 @@ function getNowWeek(nowDate) {
     return (tmpDay > 0 ? Math.ceil(tmpDay / 7) : 0) + 1;
 };
 
-export default {
+module.exports = {
     convert:convert,
     timestamp:timestamp,
     getFullYear:getFullYear,

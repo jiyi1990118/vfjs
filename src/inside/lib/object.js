@@ -328,7 +328,7 @@ function get(obj, key) {
 
 };
 
-export default {
+module.exports = {
     extend: extend,
     deepClone: deepClone,
     deepExtend: deepExtend,

@@ -4,22 +4,22 @@
  */
 "use strict";
 
-import log from '../log';
+const log = require('../log');
 
 // 表达式解析
-import expression from './expression';
+const expression = require('./expression');
 
 // 原子扫描
-import atomScan from './atomScan';
+const atomScan = require('./atomScan');
 
 // 字符检查
-import strGate from './strGate';
+const strGate = require('./strGate');
 
 // 语法原子类型
-import atomType from './atomType';
+const atomType = require('./atomType');
 
 // 获取语法输出数据类型
-import getOutExpType from './getOutExpType';
+const getOutExpType = require('./getOutExpType');
 
 // 语法解析
 function syntaxParserClass(code) {
@@ -53,15 +53,15 @@ function syntaxParserClass(code) {
 	
 	// 检查语法是否完整
 	if (this.expBlockEnd.length && !this.errMsg) {
-		this.expStruct=null;
+		this.expStruct = null;
 		this.throwErr('表达式不完整缺少' + this.expBlockEnd.length + '个闭合符号 ' + this.expBlockEnd.join(' , '))
 	} else if (this.expStruct) {
 		// 语法信息
 		this.expStruct.info = Object.assign({
 			// 标识语法解析模式
-			mode:this.mode
+			mode: this.mode
 			// 获取输出的表达式信息
-		},getOutExpType(this.expStruct))
+		}, getOutExpType(this.expStruct))
 	}
 };
 
@@ -288,13 +288,13 @@ syntaxParserClass.prototype.expressionLex = function (atom, isAdopt) {
 						// 右括号
 						case "bracketsRight":
 							// 检查是否能匹配语法块结束符号
-							if (this.expBlockEnd.length ) {
-								let symbol=this.expBlockEnd.concat().pop();
-								if(this.expBlockEnd.pop() === atom.value){
+							if (this.expBlockEnd.length) {
+								let symbol = this.expBlockEnd.concat().pop();
+								if (this.expBlockEnd.pop() === atom.value) {
 									this.args = this.levelArgs.pop();
 									break;
 									// 检查是否三元表达式
-								}else if(symbol === ':'){
+								} else if (symbol === ':') {
 									brackets = atom.value;
 									this.index--;
 									break
@@ -526,7 +526,7 @@ syntaxParserClass.prototype.throwErr = function (msg, atom) {
 // 语法缓存
 const syntaxCache = {};
 
-export default function syntaxParser(code) {
+module.exports = function syntaxParser(code) {
 	// 获取缓存
 	let syntaxStruct = syntaxCache[code];
 	if (!syntaxStruct) {

@@ -1,8 +1,8 @@
-import htmlDomApi from "./htmlDomApi";
-import vnode from "./vnode";
+const htmlDomApi = require("./htmlDomApi");
+const vnode = require("./vnode");
 
 // dom元素转虚拟dom
-export default function toVNode(node) {
+module.exports = function toVNode(node) {
 	let text;
 	
 	// 检查是否dom 元素

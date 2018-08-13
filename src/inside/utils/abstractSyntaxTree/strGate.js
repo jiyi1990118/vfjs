@@ -1,5 +1,5 @@
 //字符检测
-export default {
+module.exports = {
 	// 空白字符
 	isWhiteSpace: function (cp) {
 		return (cp === 0x20) || (cp === 0x09) || (cp === 0x0B) || (cp === 0x0C) || (cp === 0xA0) || (cp === 0x0D) || (cp === 0x0A) ||

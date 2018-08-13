@@ -1,6 +1,6 @@
 
 
-export default {
+module.exports =  {
 	// 错误日志
 	error(...errs){
 		console.warn(...errs)

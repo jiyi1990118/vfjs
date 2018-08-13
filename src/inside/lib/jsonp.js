@@ -176,6 +176,6 @@ function jsonp(option) {
 
 };
 
-export default jsonp;
+module.exports = jsonp;
 
 

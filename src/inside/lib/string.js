@@ -79,7 +79,7 @@ function escapeToRegexp(s) {
     replace(/\x08/g, '\\x08');
 };
 
-export default {
+module.exports =  {
     HTMLEncode:HTMLEncode,
     HTMLDecode:HTMLDecode,
     manualLowercase:manualLowercase,

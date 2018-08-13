@@ -90,7 +90,7 @@ function noSuffix(path) {
     return res ? res[0] : '';
 };
 
-export default {
+module.exports = {
     cwd:cwd,
     dirname:dirname,
     normalize:normalize,

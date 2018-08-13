@@ -157,7 +157,7 @@ function toObject(str, toggle) {
 	return result;
 };
 
-export default {
+module.exports =  {
 	hash: hash,
 	url: url,
 	host: host,

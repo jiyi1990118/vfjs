@@ -26,7 +26,7 @@ function arrayBufferToImage(buffer,fileName){
     return uint8ArrayToImage(new Uint8Array( buffer ),fileName);
 };
 
-export default {
+module.exports = {
     uint8ArrayToBase64:uint8ArrayToBase64,
     arrayBufferToBase64:arrayBufferToBase64,
     uint8ArrayToImage:uint8ArrayToImage,

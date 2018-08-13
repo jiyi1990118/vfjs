@@ -131,7 +131,7 @@ function equals(o1, o2) {
 	return false;
 };
 
-export default {
+module.exports = {
 	isType: isType,
 	isObject: function (data) {
 		return data instanceof Object;

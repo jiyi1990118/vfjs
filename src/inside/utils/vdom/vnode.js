@@ -34,7 +34,7 @@ class $vnode {
 
 
 //虚拟节点构造
-export default function vnode(tag, data, children, text, elm, callbackFn) {
+module.exports = function vnode(tag, data, children, text, elm, callbackFn) {
 	
 	var key = data === undefined ? undefined : data.key;
 	var conf = {

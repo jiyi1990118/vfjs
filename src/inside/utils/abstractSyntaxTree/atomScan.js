@@ -1,9 +1,9 @@
 // 字符检查
-import strGate from './strGate';
+const strGate = require('./strGate');
 // 语法原子类型
-import atomType from './atomType';
+const atomType = require('./atomType');
 
-export default function (scan) {
+module.exports = function (scan) {
 	
 	// 标识符
 	scan.identifierLex = function () {

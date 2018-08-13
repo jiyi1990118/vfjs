@@ -1,17 +1,17 @@
 // HTML解析包
-import HTMLParser from './HTMLParser';
+const HTMLParser = require('./HTMLParser');
 
 // 字符串处理包
-import string from '../lib/string';
+const string = require('../lib/string');
 
 // 语法解析
-import syntaxTree from './abstractSyntaxTree';
+const syntaxTree = require('./abstractSyntaxTree');
 
 // 虚拟Dom包
-import vdom from './vdom';
+const vdom = require('./vdom');
 
 // 日志包
-import log from './log';
+const log = require('./log')
 
 /**
  * html字符串转虚拟dom
@@ -108,7 +108,7 @@ function str2vdom(htmlStr, mode) {
 						return attrs;
 					}, {})
 				},
-				children:[]
+				children: []
 			}
 			
 			structLevel.push(nowStruct)
@@ -222,7 +222,7 @@ function str2vdom(htmlStr, mode) {
  * @param mode
  * @returns {Array}
  */
-export default function (html, mode) {
+module.exports = function (html, mode) {
 	// 检查是否dom节点
 	return html.nodeName ? vdom.node2vnode(html, mode) : str2vdom(html, mode);
 };

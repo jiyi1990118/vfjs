@@ -1,5 +1,10 @@
 import {parse} from '../src/inside/utils/vf';
 
+
+import app from './app.vf';
+
+console.log(app,'----')
+
 window.onload = function () {
 	let template = document.querySelector('script[type="text/vf-template"]').innerHTML;
 	

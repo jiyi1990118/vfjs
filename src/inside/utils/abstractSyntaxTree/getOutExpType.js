@@ -49,4 +49,4 @@ function getOutExpType(syntaxStruct, outExpInfo) {
 	return outExpInfo;
 }
 
-export default getOutExpType;
+module.exports = getOutExpType;
