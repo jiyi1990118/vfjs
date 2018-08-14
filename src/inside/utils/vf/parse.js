@@ -27,19 +27,21 @@ module.exports = function (pageStr) {
 				pageModelInfo.styles.push({
 					lang: attrsMap.lang ? attrsMap.lang.value : 'css',
 					scoped: !!attrsMap.scoped,
-					code: children[0] ? children[0].text : ''
+					code: children[0] ? children[0].text : '',
+					attrs: attrsMap
 				});
 				break;
 			case 'script':
 				// 序列化脚本数据结构
 				pageModelInfo.script = {
 					type: attrsMap.type ? attrsMap.type.value.replace(/^text\//i, '') : 'javascript',
-					code: children[0] ? children[0].text : ''
+					code: children[0] ? children[0].text : '',
+					attrs: attrsMap
 				};
 				break;
 			case 'template':
 				// 序列化 html模板数据结构
-				pageModelInfo.template[attrsMap.name ? attrsMap.name.value : 'default'] = children;
+				pageModelInfo.template[attrsMap.name ? attrsMap.name.value : 'master'] = vnode;
 				break;
 			default:
 				// 其余类型模块先存储起来
