@@ -186,10 +186,14 @@ module.exports = function (source) {
 	code += `\nexport default component.exports`
 	console.log(code)
 	// return code
-	
+	console.log(options)
 	
 	this.callback(null,`export default ${JSON.stringify(compilerInfo)}`)
 };
 
 module.exports.raw = false;
+
+module.exports.VfLoaderPlugin = function () {
+	console.log('---------')
+}
 

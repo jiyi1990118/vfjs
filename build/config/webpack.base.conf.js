@@ -9,7 +9,7 @@ function resolve(dir) {
 }
 
 const createLintingRule = () => ({
-	test: /\.(js|vue)$/,
+	test: /\.(js|vf)$/,
 	loader: 'eslint-loader',
 	enforce: 'pre',
 	include: [resolve('src'), resolve('test')],
@@ -47,13 +47,11 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			...(config.dev.useEslint ? [createLintingRule()] : []),
+			// ...(config.dev.useEslint ? [createLintingRule()] : []),
 			{
 				test: /\.vf$/,
 				loader:'vf-loader',
-				options: {
-				  name:'xiyuan'
-				}||vfLoaderConfig
+				options: vfLoaderConfig
 			},
 			{
 				test: /\.js$/,

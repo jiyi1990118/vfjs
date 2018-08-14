@@ -1,5 +1,3 @@
-import {parse} from '../src/inside/utils/vf';
-
 
 import app from './app.vf';
 
