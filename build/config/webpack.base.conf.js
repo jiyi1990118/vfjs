@@ -3,6 +3,7 @@ const path = require('path')
 const utils = require('../utils')
 const config = require('../config')
 const vfLoaderConfig = require('./vf-loader.conf')
+const VfLoaderPlugin = require('../loaders/vf-loader').VfLoaderPlugin
 
 function resolve(dir) {
 	return path.join(__dirname, '..', dir)
@@ -50,7 +51,7 @@ module.exports = {
 			// ...(config.dev.useEslint ? [createLintingRule()] : []),
 			{
 				test: /\.vf$/,
-				loader:'vf-loader',
+				loader:'vf-loader', // require.resolve('../loaders/vf-loader'),
 				options: vfLoaderConfig
 			},
 			{
@@ -84,6 +85,9 @@ module.exports = {
 			}
 		]
 	},
+	plugins: [
+		new VfLoaderPlugin()
+	],
 	node: {
 		// prevent webpack from injecting useless setImmediate polyfill because Vue
 		// source contains it (although only uses it if it's native).

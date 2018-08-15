@@ -18,6 +18,8 @@ const selectBlock = require('./select');
 // const genStylesCode = require('./codegen/styleInjection')
 // 自定义代码块生成工具
 const genCustomBlocksCode = require('./codegen/customBlocks')
+// vf插件
+const VfLoaderPlugin =require('./plugin');
 
 module.exports = function (source) {
 	const loaderContext = this;
@@ -108,7 +110,7 @@ module.exports = function (source) {
 	// template
 	let templateImport = `var render, staticRenderFns`
 	let templateRequest
-	let template=compilerInfo.template.master
+	let template = compilerInfo.template.master
 	if (template) {
 		const src = template.src || resourcePath
 		const idQuery = `&key=${id}`
@@ -152,7 +154,7 @@ module.exports = function (source) {
 		${stylesCode}
 
 		/* normalize component */
-		import normalizer from ${stringifyRequest(`!${'componentNormalizerPath'}`)}
+		/*import normalizer from ${stringifyRequest(`!${'componentNormalizerPath'}`)}
 		var component = normalizer(
 		  script,
 		  render,
@@ -162,7 +164,11 @@ module.exports = function (source) {
 		  ${hasScoped ? JSON.stringify(id) : `null`},
 		  ${isServer ? JSON.stringify(hash(request)) : `null`}
 		  ${isShadow ? `,true` : ``}
-		)
+		)*/
+		var component={
+			options:{},
+			exports:''
+		}
     `.trim() + `\n`
 	
 	if (compilerInfo.customBlocks && compilerInfo.customBlocks.length) {
@@ -185,15 +191,15 @@ module.exports = function (source) {
 	
 	code += `\nexport default component.exports`
 	console.log(code)
-	// return code
-	console.log(options)
+	return code
+	// console.log(options)
 	
-	this.callback(null,`export default ${JSON.stringify(compilerInfo)}`)
+	// return `export default ${JSON.stringify(compilerInfo)}`
+	
+	// this.callback(null, `export default ${JSON.stringify(compilerInfo)}`)
 };
 
 module.exports.raw = false;
 
-module.exports.VfLoaderPlugin = function () {
-	console.log('---------')
-}
+module.exports.VfLoaderPlugin = VfLoaderPlugin
 
