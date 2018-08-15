@@ -1,6 +1,6 @@
 const qs = require('querystring')
 const loaderUtils = require('loader-utils')
-const { compileTemplate } = require('@vue/component-compiler-utils')
+// const { compileTemplate } = require('@vue/component-compiler-utils')
 
 // Loader that compiles raw template into JavaScript functions.
 // This is injected by the global pitcher (../pitch) for template
@@ -13,15 +13,15 @@ module.exports = function (source) {
   // vue-loader options because we've set an ident in the plugin and used that
   // ident to create the request for this loader in the pitcher.
   const options = loaderUtils.getOptions(loaderContext) || {}
-  const { id } = query
+  const { key } = query
   const isServer = loaderContext.target === 'node'
   const isProduction = loaderContext.minimize || process.env.NODE_ENV === 'production'
   const isFunctional = query.functional
 
   // allow using custom compiler via options
-  const compiler = options.compiler || require('vue-template-compiler')
+  const compiler = options.compiler //|| require('vue-template-compiler')
   const compilerOptions = Object.assign({}, options.compilerOptions, {
-    scopeId: query.scoped ? `data-v-${id}` : null,
+    scopeId: query.scoped ? `data-v-${key}` : null,
     comments: query.comments
   })
 
@@ -39,7 +39,9 @@ module.exports = function (source) {
     optimizeSSR: isServer && options.optimizeSSR !== false
   }
 
-  const compiled = compileTemplate(finalOptions)
+  const compiled ={}// compileTemplate(finalOptions)
+    
+    console.log(JSON.stringify(finalOptions))
 
   // tips
   if (compiled.tips && compiled.tips.length) {

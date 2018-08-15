@@ -36,6 +36,7 @@ module.exports = code => code
 module.exports.pitch = function (remainingRequest) {
 	// 获取当前loader 配置选项
 	const options = loaderUtils.getOptions(this)
+	// 缓存目录 、 缓存标识符
 	const {cacheDirectory, cacheIdentifier} = options
 	// 获取请求的资源参数
 	const query = qs.parse(this.resourceQuery.slice(1))
@@ -108,8 +109,9 @@ module.exports.pitch = function (remainingRequest) {
 		}
 	}
 	
-	// for templates: inject the template compiler & optional cache
+	// 模板：注入模板编译器和可选缓存
 	if (query.type === `template`) {
+		// 检查并使用缓存 loader
 		const cacheLoader = cacheDirectory && cacheIdentifier
 			? [`cache-loader?${JSON.stringify({
 				cacheDirectory,
@@ -122,7 +124,7 @@ module.exports.pitch = function (remainingRequest) {
 			...loaders
 		])
 		console.log(request)
-		// the template compiler uses esm exports
+		// 输出模版
 		return `export * from ${request}`
 	}
 	
