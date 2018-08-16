@@ -7,7 +7,9 @@ module.exports = function genTemplateBlocksCode(templates,
                                                 resourceQuery,
                                                 stringifyRequest,
                                                 hasScoped,
-                                                inheritQuery) {
+                                                inheritQuery,
+                                                id
+) {
 	let templateRequestList = [];
 	return {
 		templateRequestList,
@@ -15,17 +17,18 @@ module.exports = function genTemplateBlocksCode(templates,
 		templateImport: `\n/* Template blocks */\n` + Object.keys(templates).map(name => {
 			let template = templates[name];
 			let src = template.src || resourcePath
+			let idQuery = `&id=${id}`
 			let keyQuery = `&key=${name}`
 			let scopedQuery = hasScoped ? `&scoped=true` : ``
 			let attrsQuery = attrsToQuery(template.data.attrsMap)
-			let query = `?vf&type=template${keyQuery}${scopedQuery}${attrsQuery}${inheritQuery}`
+			let query = `?vf&type=template${idQuery}${keyQuery}${scopedQuery}${attrsQuery}${inheritQuery}`
 			let request = stringifyRequest(src + query);
 			
 			templateRequestList.push(request);
 			return (
 				`import template_${name} from ${request}\n` +
 				// 把组件实例当做参数传入template 返回的方法中进行关联
-				`if (typeof template_${name} === 'function') template_${name}(component)`
+				`if (typeof template_${name} === 'function') template_${name}(/*component*/)`
 			)
 		}).join(`\n`) + `\n`
 	}

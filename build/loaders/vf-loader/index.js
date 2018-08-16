@@ -117,7 +117,8 @@ module.exports = function (source) {
 		resourceQuery,
 		stringifyRequest,
 		hasScoped,
-		inheritQuery
+		inheritQuery,
+		id
 	)
 	
 	// script

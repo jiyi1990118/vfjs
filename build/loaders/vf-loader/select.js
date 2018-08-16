@@ -4,7 +4,7 @@ module.exports = function selectBlock(compilerInfo, loaderContext, query) {
 		const template = compilerInfo.template[query.key];
 		loaderContext.callback(
 			null,
-			`\nexport default ${JSON.stringify(template)}`,
+			JSON.stringify(template),
 			compilerInfo.template.map
 		)
 		return
