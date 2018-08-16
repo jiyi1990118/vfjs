@@ -70,7 +70,7 @@ module.exports.pitch = function (remainingRequest) {
 		const seen = new Map()
 		// loader 存储
 		const loaderStrings = []
-
+		
 		loaders.forEach(loader => {
 			// 获取loader类型
 			const type = typeof loader === 'string' ? loader : loader.path
@@ -123,22 +123,20 @@ module.exports.pitch = function (remainingRequest) {
 			templateLoaderPath + `??vf-loader-options`,
 			...loaders
 		])
-		console.log(request)
 		// 输出模版
-		return `export * from ${request}`
+		return `import templateOut from ${request};
+		\nexport default templateOut`
 	}
 	
-	// if a custom block has no other matching loader other than vf-loader itself,
-	// we should ignore it
+	// 如果自定义块除了vf加载器本身之外没有其他匹配加载器，
+	// 我们应该忽略它
 	if (query.type === `custom` &&
 		loaders.length === 1 &&
 		loaders[0].path === selfPath) {
 		return ``
 	}
 	
-	// When the user defines a rule that has only resourceQuery but no test,
-	// both that rule and the cloned rule will match, resulting in duplicated
-	// loaders. Therefore it is necessary to perform a dedupe here.
+	// 避免未匹配到vf文件处理规则，重新输出文件资源
 	const request = genRequest(loaders)
 	return `import mod from ${request}; export default mod; export * from ${request}`
 }

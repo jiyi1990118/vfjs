@@ -1,10 +1,10 @@
 module.exports = function selectBlock(compilerInfo, loaderContext, query) {
 	// 模板类型
 	if (query.type === `template` && query.key != null) {
-		const template = compilerInfo.template[query.key]
+		const template = compilerInfo.template[query.key];
 		loaderContext.callback(
 			null,
-			template,
+			`\nexport default ${JSON.stringify(template)}`,
 			compilerInfo.template.map
 		)
 		return

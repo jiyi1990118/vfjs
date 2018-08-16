@@ -16,10 +16,12 @@ const compilerParse = require('./compilerParse')
 const selectBlock = require('./select');
 // 样式代码生成工具
 // const genStylesCode = require('./codegen/styleInjection')
-// 自定义代码块生成工具
+// 自定义代码块请求生成工具
 const genCustomBlocksCode = require('./codegen/customBlocks')
+// 模板代码块请求生成工具
+const genTemplateBlocksCode = require('./codegen/templateBlocks')
 // vf插件
-const VfLoaderPlugin =require('./plugin');
+const VfLoaderPlugin = require('./plugin');
 
 module.exports = function (source) {
 	const loaderContext = this;
@@ -108,18 +110,15 @@ module.exports = function (source) {
 	)
 	
 	// template
-	let templateImport = `var render, staticRenderFns`
-	let templateRequest
-	let template = compilerInfo.template.master
-	if (template) {
-		const src = template.src || resourcePath
-		const idQuery = `&key=${id}`
-		const scopedQuery = hasScoped ? `&scoped=true` : ``
-		const attrsQuery = attrsToQuery(template.data.attrsMap)
-		const query = `?vf&type=template${idQuery}${scopedQuery}${attrsQuery}${inheritQuery}`
-		const request = templateRequest = stringifyRequest(src + query)
-		templateImport = `import { render, staticRenderFns } from ${request}`
-	}
+	// let templateImport = `var render, staticRenderFns`
+	let {templateImport, templateRequestList} = genTemplateBlocksCode(
+		compilerInfo.template,
+		resourcePath,
+		resourceQuery,
+		stringifyRequest,
+		hasScoped,
+		inheritQuery
+	)
 	
 	// script
 	let scriptImport = `var script = {}`
@@ -148,7 +147,7 @@ module.exports = function (source) {
 		)*/
 	}
 	
-	let code = `
+	let code =templateImport|| `
 		${templateImport}
 		${scriptImport}
 		${stylesCode}
@@ -171,6 +170,7 @@ module.exports = function (source) {
 		}
     `.trim() + `\n`
 	
+	// 自定义模块 请求生成并写入资源
 	if (compilerInfo.customBlocks && compilerInfo.customBlocks.length) {
 		code += genCustomBlocksCode(
 			compilerInfo.customBlocks,
@@ -181,18 +181,19 @@ module.exports = function (source) {
 	}
 	
 	if (needsHotReload) {
-		// code += `\n` + genHotReloadCode(id, hasFunctional, templateRequest)
+		// code += `\n` + genHotReloadCode(id, hasFunctional, templateRequestList)
 	}
 	
 	// Expose filename. This is used by the devtools and vue runtime warnings.
 	if (!isProduction) {
-		code += `\ncomponent.options.__file = ${JSON.stringify(rawShortFilePath)}`
+		// code += `\ncomponent.options.__file = ${JSON.stringify(rawShortFilePath)}`
 	}
 	
-	code += `\nexport default component.exports`
-	console.log(code)
-	return code
-	// console.log(options)
+	// code += `\nexport default component.exports`
+	code+=`\nexport default template_master`
+	console.log(code);
+	return code;
+	// return `export default ${JSON.stringify(code)}`
 	
 	// return `export default ${JSON.stringify(compilerInfo)}`
 	
@@ -202,4 +203,5 @@ module.exports = function (source) {
 module.exports.raw = false;
 
 module.exports.VfLoaderPlugin = VfLoaderPlugin
+
 

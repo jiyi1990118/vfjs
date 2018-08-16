@@ -1,6 +1,7 @@
 const qs = require('querystring')
 const { attrsToQuery } = require('./utils')
 
+// 自定义模块请求生产工具
 module.exports = function genCustomBlocksCode (
   blocks,
   resourcePath,

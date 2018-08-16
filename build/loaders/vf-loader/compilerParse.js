@@ -40,7 +40,7 @@ module.exports = function compilerParse(options) {
 	const { source, filename = '', parse, compilerParseOptions = { pad: 'line' }, sourceRoot = process.cwd(), needMap = true } = options;
 	// 生成缓存key标识
 	const cacheKey = hash(filename + source);
-	// 尝试从缓存中获取数据
+	// 尝试从缓存中获取文件资源数据
 	let output = cache.get(cacheKey);
 	if (output) return output;
 	// vf组件解析

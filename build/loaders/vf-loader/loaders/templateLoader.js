@@ -41,7 +41,7 @@ module.exports = function (source) {
 
   const compiled ={}// compileTemplate(finalOptions)
     
-    console.log(JSON.stringify(finalOptions))
+    // console.log(finalOptions)
 
   // tips
   if (compiled.tips && compiled.tips.length) {
@@ -60,9 +60,12 @@ module.exports = function (source) {
   }
 
   const { code } = compiled
-
+	
+	console.log('????',JSON.stringify(source))
+	return `export default {}`
   // finish with ESM exports
-  return code + `\nexport { render, staticRenderFns }`
+  // return code + `\nexport { render, staticRenderFns }`
+  // return JSON.stringify(source)
 }
 
 function pad (source) {
