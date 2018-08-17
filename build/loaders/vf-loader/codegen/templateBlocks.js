@@ -28,7 +28,7 @@ module.exports = function genTemplateBlocksCode(templates,
 			return (
 				`import template_${name} from ${request}\n` +
 				// 把组件实例当做参数传入template 返回的方法中进行关联
-				`if (typeof template_${name} === 'function') template_${name}(/*component*/)`
+				`if (typeof template_${name} === 'function') template_${name}(component)`
 			)
 		}).join(`\n`) + `\n`
 	}

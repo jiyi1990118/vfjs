@@ -41,8 +41,6 @@ module.exports = function (source) {
 	
 	const compiled = {}// compileTemplate(finalOptions)
 	
-	console.log(compilerOptions)
-	
 	// tips
 	if (compiled.tips && compiled.tips.length) {
 		compiled.tips.forEach(tip => {
@@ -62,11 +60,11 @@ module.exports = function (source) {
 	const {code} = compiled
 	
 	// 输出模版渲染接口
-	return `export default function () {
-		return {
+	return `export default function (component) {
+		component.writeTemplate("${query.key}", {
 			domTree:${source},
 			compilerOptions:${JSON.stringify(compilerOptions)}
-		}
+		})
 	}`
 }
 

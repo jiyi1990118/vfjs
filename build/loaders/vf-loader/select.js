@@ -1,3 +1,4 @@
+// 此包主要对对应的模块提取并输出
 module.exports = function selectBlock(compilerInfo, loaderContext, query) {
 	// 模板类型
 	if (query.type === `template` && query.key != null) {

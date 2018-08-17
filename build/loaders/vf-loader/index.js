@@ -15,11 +15,13 @@ const compilerParse = require('./compilerParse')
 // 组件模块选择工具
 const selectBlock = require('./select');
 // 样式代码生成工具
-// const genStylesCode = require('./codegen/styleInjection')
+const genStylesCode = require('./codegen/styleInjection')
 // 自定义代码块请求生成工具
 const genCustomBlocksCode = require('./codegen/customBlocks')
 // 模板代码块请求生成工具
 const genTemplateBlocksCode = require('./codegen/templateBlocks')
+// 组件构建工具路径
+const componentBuildPath = require.resolve('./runtime/componentBuild')
 // vf插件
 const VfLoaderPlugin = require('./plugin');
 
@@ -111,6 +113,7 @@ module.exports = function (source) {
 	
 	// template
 	// let templateImport = `var render, staticRenderFns`
+	// 获取vf文件中的template 请求的code
 	let {templateImport, templateRequestList} = genTemplateBlocksCode(
 		compilerInfo.template,
 		resourcePath,
@@ -121,54 +124,56 @@ module.exports = function (source) {
 		id
 	)
 	
-	// script
+	// 组件中的 javascript 片段处理
 	let scriptImport = `var script = {}`
 	if (compilerInfo.script) {
 		const src = compilerInfo.script.src || resourcePath
 		const attrsQuery = attrsToQuery(compilerInfo.script.attrs, 'js')
 		const query = `?vue&type=script${attrsQuery}${inheritQuery}`
-		const request = stringifyRequest(src + query)
+		const request = stringifyRequest(src + query);
+		
 		scriptImport = (
 			`import script from ${request}\n` +
-			`export * from ${request}` // support named exports
+			// 支持指定的出口
+			`export * from ${request}\n`
 		)
 	}
 	
 	// styles
 	let stylesCode = ``
 	if (compilerInfo.styles.length) {
-		/*stylesCode = genStylesCode(
+		/*stylesCode = */genStylesCode(
 			loaderContext,
 			compilerInfo.styles,
 			id,
 			resourcePath,
 			stringifyRequest,
-			needsHotReload,
-			isServer || isShadow // needs explicit injection?
-		)*/
+			false,//needsHotReload,
+			false//isServer || isShadow // needs explicit injection?
+		)
 	}
 	
-	let code =templateImport|| `
-		${templateImport}
-		${scriptImport}
-		${stylesCode}
-
-		/* normalize component */
-		/*import normalizer from ${stringifyRequest(`!${'componentNormalizerPath'}`)}
-		var component = normalizer(
-		  script,
-		  render,
-		  staticRenderFns,
-		  ${hasFunctional ? `true` : `false`},
-		  ${/injectStyles/.test(stylesCode) ? `injectStyles` : `null`},
-		  ${hasScoped ? JSON.stringify(id) : `null`},
-		  ${isServer ? JSON.stringify(hash(request)) : `null`}
-		  ${isShadow ? `,true` : ``}
-		)*/
-		var component={
-			options:{},
-			exports:''
-		}
+	let code = `
+	// 组件javascript 资源引入
+	${scriptImport}
+	/* build component */
+	import componentBuild from ${stringifyRequest(`!${componentBuildPath}`)}
+	// 组件构建
+	var component = componentBuild(
+		${JSON.stringify(id)},
+		// 组件javascript
+		script,
+		// 标识是否启用了无上下文 render渲染
+		${hasFunctional ? `true` : `false`},
+		${/injectStyles/.test(stylesCode) ? `injectStyles` : `null`},
+		// 标识 style 是否启用scope
+		${hasScoped ? JSON.stringify(id) : `null`},
+		// 标识是否服务端渲染
+		${isServer ? JSON.stringify(hash(request)) : `null`}
+		${isShadow ? `,true` : ``}
+	)
+	// 模板资源
+	${templateImport}
     `.trim() + `\n`
 	
 	// 自定义模块 请求生成并写入资源
@@ -185,20 +190,14 @@ module.exports = function (source) {
 		// code += `\n` + genHotReloadCode(id, hasFunctional, templateRequestList)
 	}
 	
-	// Expose filename. This is used by the devtools and vue runtime warnings.
+	// 设置组件源文件路径，用于调试提示
 	if (!isProduction) {
-		// code += `\ncomponent.options.__file = ${JSON.stringify(rawShortFilePath)}`
+		code += `\ncomponent.setSourceFilePath( ${JSON.stringify(rawShortFilePath)})`
 	}
-	
-	// code += `\nexport default component.exports`
-	code+=`\nexport default template_master`
-	console.log(code);
-	return code;
-	// return `export default ${JSON.stringify(code)}`
-	
-	// return `export default ${JSON.stringify(compilerInfo)}`
-	
-	// this.callback(null, `export default ${JSON.stringify(compilerInfo)}`)
+	// 对外输出组件
+	code += `\nexport default component`
+	// console.log(code)
+	return code
 };
 
 module.exports.raw = false;

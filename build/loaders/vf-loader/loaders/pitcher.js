@@ -104,7 +104,6 @@ module.exports.pitch = function (remainingRequest) {
 				stylePostLoaderPath,
 				...beforeLoaders
 			])
-			// console.log(request)
 			return `import mod from ${request}; export default mod; export * from ${request}`
 		}
 	}

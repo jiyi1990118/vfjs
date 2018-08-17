@@ -36,6 +36,7 @@ function generateSourceMap(filename, source, generated, sourceRoot) {
 }
 
 
+// 组件解析
 module.exports = function compilerParse(options) {
 	const { source, filename = '', parse, compilerParseOptions = { pad: 'line' }, sourceRoot = process.cwd(), needMap = true } = options;
 	// 生成缓存key标识

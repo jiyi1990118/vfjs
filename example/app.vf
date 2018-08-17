@@ -20,6 +20,12 @@
     </div>
 </template>
 
+<template name="test">
+<div>
+    <if></if>
+</div>
+</template>
+
 <script type="text/javascript">
 
     // 引入数据观察工具

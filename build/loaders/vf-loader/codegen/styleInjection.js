@@ -1,51 +1,57 @@
-const { attrsToQuery } = require('./utils')
+const {attrsToQuery} = require('./utils')
 const hotReloadAPIPath = JSON.stringify(require.resolve('vue-hot-reload-api'))
 
-module.exports = function genStyleInjectionCode (
-  loaderContext,
-  styles,
-  id,
-  resourcePath,
-  stringifyRequest,
-  needsHotReload,
-  needsExplicitInjection
-) {
-  let styleImportsCode = ``
-  let styleInjectionCode = ``
-  let cssModulesHotReloadCode = ``
-
-  let hasCSSModules = false
-  const cssModuleNames = new Map()
-
-  function genStyleRequest (style, i) {
-    const src = style.src || resourcePath
-    const attrsQuery = attrsToQuery(style.attrs, 'css')
-    const inheritQuery = `&${loaderContext.resourceQuery.slice(1)}`
-    // make sure to only pass id when necessary so that we don't inject
-    // duplicate tags when multiple components import the same css file
-    const idQuery = style.scoped ? `&id=${id}` : ``
-    const query = `?vue&type=style&index=${i}${idQuery}${attrsQuery}${inheritQuery}`
-    return stringifyRequest(src + query)
-  }
-
-  function genCSSModulesCode (style, request, i) {
-    hasCSSModules = true
-
-    const moduleName = style.module === true ? '$style' : style.module
-    if (cssModuleNames.has(moduleName)) {
-      loaderContext.emitError(`CSS module name ${moduleName} is not unique!`)
-    }
-    cssModuleNames.set(moduleName, true)
-
-    // `(vue-)style-loader` exports the name-to-hash map directly
-    // `css-loader` exports it in `.locals`
-    const locals = `(style${i}.locals || style${i})`
-    const name = JSON.stringify(moduleName)
-
-    if (!needsHotReload) {
-      styleInjectionCode += `this[${name}] = ${locals}\n`
-    } else {
-      styleInjectionCode += `
+module.exports = function genStyleInjectionCode(loaderContext,
+                                                styles,
+                                                id,
+                                                resourcePath,
+                                                stringifyRequest,
+                                                needsHotReload,
+                                                needsExplicitInjection) {
+	// 样式引入的代码
+	let styleImportsCode = ``
+	// 样式注入的代码
+	let styleInjectionCode = ``
+	// css模块热加载代码
+	let cssModulesHotReloadCode = ``
+	
+	// 标识是否开启css模块
+	let hasCSSModules = false
+	
+	// css 模块名称存储
+	const cssModuleNames = new Map()
+	
+	// 生产样式请求
+	function genStyleRequest(style, i) {
+		const src = style.src || resourcePath
+		const attrsQuery = attrsToQuery(style.attrs, 'css')
+		const inheritQuery = `&${loaderContext.resourceQuery.slice(1)}`
+		// make sure to only pass id when necessary so that we don't inject
+		// duplicate tags when multiple components import the same css file
+		const idQuery = style.scoped ? `&id=${id}` : ``
+		const query = `?vue&type=style&index=${i}${idQuery}${attrsQuery}${inheritQuery}`
+		return stringifyRequest(src + query)
+	}
+	
+	// 生成 css 模块处理代码
+	function genCSSModulesCode(style, request, i) {
+		hasCSSModules = true
+		
+		const moduleName = style.module === true ? '$style' : style.module
+		if (cssModuleNames.has(moduleName)) {
+			loaderContext.emitError(`CSS module name ${moduleName} is not unique!`)
+		}
+		cssModuleNames.set(moduleName, true)
+		
+		// `(vue-)style-loader` exports the name-to-hash map directly
+		// `css-loader` exports it in `.locals`
+		const locals = `(style${i}.locals || style${i})`
+		const name = JSON.stringify(moduleName)
+		
+		if (!needsHotReload) {
+			styleInjectionCode += `this[${name}] = ${locals}\n`
+		} else {
+			styleInjectionCode += `
         cssModules[${name}] = ${locals}
         Object.defineProperty(this, ${name}, {
           get: function () {
@@ -53,7 +59,7 @@ module.exports = function genStyleInjectionCode (
           }
         })
       `
-      cssModulesHotReloadCode += `
+			cssModulesHotReloadCode += `
         module.hot && module.hot.accept([${request}], function () {
           var oldLocals = cssModules[${name}]
           if (oldLocals) {
@@ -65,50 +71,51 @@ module.exports = function genStyleInjectionCode (
           }
         })
       `
-    }
-  }
-
-  // explicit injection is needed in SSR (for critical CSS collection)
-  // or in Shadow Mode (for injection into shadow root)
-  // In these modes, vue-style-loader exports objects with the __inject__
-  // method; otherwise we simply import the styles.
-  if (!needsExplicitInjection) {
-    styles.forEach((style, i) => {
-      const request = genStyleRequest(style, i)
-      styleImportsCode += `import style${i} from ${request}\n`
-      if (style.module) genCSSModulesCode(style, request, i)
-    })
-  } else {
-    styles.forEach((style, i) => {
-      const request = genStyleRequest(style, i)
-      styleInjectionCode += (
-        `var style${i} = require(${request})\n` +
-        `if (style${i}.__inject__) style${i}.__inject__(context)\n`
-      )
-      if (style.module) genCSSModulesCode(style, request, i)
-    })
-  }
-
-  if (!needsExplicitInjection && !hasCSSModules) {
-    return styleImportsCode
-  }
-
-  return `
-${styleImportsCode}
-${hasCSSModules && needsHotReload ? `var cssModules = {}` : ``}
-${needsHotReload ? `var disposed = false` : ``}
-
-function injectStyles (context) {
-  ${needsHotReload ? `if (disposed) return` : ``}
-  ${styleInjectionCode}
-}
-
-${needsHotReload ? `
-  module.hot && module.hot.dispose(function (data) {
-    disposed = true
-  })
-` : ``}
-
-${cssModulesHotReloadCode}
-  `.trim()
+		}
+	}
+	
+	// explicit injection is needed in SSR (for critical CSS collection)
+	// or in Shadow Mode (for injection into shadow root)
+	// In these modes, vue-style-loader exports objects with the __inject__
+	// method; otherwise we simply import the styles.
+	if (!needsExplicitInjection) {
+		styles.forEach((style, i) => {
+			const request = genStyleRequest(style, i)
+			styleImportsCode += `import style${i} from ${request}\n`
+			if (style.module) genCSSModulesCode(style, request, i)
+		})
+	} else {
+		styles.forEach((style, i) => {
+			const request = genStyleRequest(style, i)
+			styleInjectionCode += (
+				`var style${i} = require(${request})\n` +
+				`if (style${i}.__inject__) style${i}.__inject__(context)\n`
+			)
+			if (style.module) genCSSModulesCode(style, request, i)
+		})
+	}
+	
+	if (!needsExplicitInjection && !hasCSSModules) {
+		return styleImportsCode
+	}
+	
+	// style样式资源路径输出
+	return `
+	${styleImportsCode}
+	${hasCSSModules && needsHotReload ? `var cssModules = {}` : ``}
+	${needsHotReload ? `var disposed = false` : ``}
+	
+	function injectStyles (context) {
+	  ${needsHotReload ? `if (disposed) return` : ``}
+	  ${styleInjectionCode}
+	}
+	
+	${needsHotReload ? `
+	  module.hot && module.hot.dispose(function (data) {
+	    disposed = true
+	  })
+	` : ``}
+	
+	${cssModulesHotReloadCode}
+    `.trim()
 }
