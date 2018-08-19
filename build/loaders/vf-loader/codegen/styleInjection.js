@@ -1,5 +1,5 @@
 const {attrsToQuery} = require('./utils')
-const hotReloadAPIPath = JSON.stringify(require.resolve('vue-hot-reload-api'))
+const hotReloadAPIPath = './vue-hot-reload-api' || JSON.stringify(require.resolve('vue-hot-reload-api'))
 
 module.exports = function genStyleInjectionCode(loaderContext,
                                                 styles,
@@ -26,6 +26,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		const src = style.src || resourcePath
 		const attrsQuery = attrsToQuery(style.attrs, 'css')
 		const inheritQuery = `&${loaderContext.resourceQuery.slice(1)}`
+		console.log(inheritQuery)
 		// make sure to only pass id when necessary so that we don't inject
 		// duplicate tags when multiple components import the same css file
 		const idQuery = style.scoped ? `&id=${id}` : ``
@@ -38,9 +39,13 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		hasCSSModules = true
 		
 		const moduleName = style.module === true ? '$style' : style.module
+		
+		// 检查模块名称是否存在
 		if (cssModuleNames.has(moduleName)) {
 			loaderContext.emitError(`CSS module name ${moduleName} is not unique!`)
 		}
+		
+		// 设置css模块名称
 		cssModuleNames.set(moduleName, true)
 		
 		// `(vue-)style-loader` exports the name-to-hash map directly
@@ -48,9 +53,12 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		const locals = `(style${i}.locals || style${i})`
 		const name = JSON.stringify(moduleName)
 		
+		// 检查当前是否服务器渲染
 		if (!needsHotReload) {
+			// 注入css模块
 			styleInjectionCode += `this[${name}] = ${locals}\n`
 		} else {
+			// 热加载模式下注入的css代码
 			styleInjectionCode += `
         cssModules[${name}] = ${locals}
         Object.defineProperty(this, ${name}, {
@@ -59,6 +67,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
           }
         })
       `
+			// 热加载控制css的脚本
 			cssModulesHotReloadCode += `
         module.hot && module.hot.accept([${request}], function () {
           var oldLocals = cssModules[${name}]
@@ -74,14 +83,18 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		}
 	}
 	
-	// explicit injection is needed in SSR (for critical CSS collection)
-	// or in Shadow Mode (for injection into shadow root)
-	// In these modes, vue-style-loader exports objects with the __inject__
-	// method; otherwise we simply import the styles.
+	// 在SSR(关键CSS集合)中需要显式注入
+	// 或在阴影模式下(用于向阴影根注入)
+	// 在这些模式中，vue-style-loader会使用__inject__导出对象
+	// 方法;否则我们只需要导入样式。
+	
+	// 检查是否需要显式注射
 	if (!needsExplicitInjection) {
+		// 在生产环境中只需要引入css
 		styles.forEach((style, i) => {
 			const request = genStyleRequest(style, i)
 			styleImportsCode += `import style${i} from ${request}\n`
+			// 检查是否css 模块 , 则生成 注入css模块代码
 			if (style.module) genCSSModulesCode(style, request, i)
 		})
 	} else {
@@ -95,10 +108,11 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		})
 	}
 	
+	console.log(styleImportsCode,'------->')
+	// 是否非 css 模块化 非显式注射（服务端渲染）
 	if (!needsExplicitInjection && !hasCSSModules) {
 		return styleImportsCode
 	}
-	
 	// style样式资源路径输出
 	return `
 	${styleImportsCode}

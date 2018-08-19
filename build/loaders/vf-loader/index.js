@@ -142,7 +142,7 @@ module.exports = function (source) {
 	// styles
 	let stylesCode = ``
 	if (compilerInfo.styles.length) {
-		/*stylesCode = */genStylesCode(
+		stylesCode=genStylesCode(
 			loaderContext,
 			compilerInfo.styles,
 			id,
@@ -156,6 +156,8 @@ module.exports = function (source) {
 	let code = `
 	// 组件javascript 资源引入
 	${scriptImport}
+	// style样式引入
+	${stylesCode}
 	/* build component */
 	import componentBuild from ${stringifyRequest(`!${componentBuildPath}`)}
 	// 组件构建
@@ -196,7 +198,7 @@ module.exports = function (source) {
 	}
 	// 对外输出组件
 	code += `\nexport default component`
-	// console.log(code)
+	console.log(code)
 	return code
 };
 
