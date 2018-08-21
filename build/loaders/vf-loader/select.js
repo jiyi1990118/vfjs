@@ -22,8 +22,8 @@ module.exports = function selectBlock(compilerInfo, loaderContext, query) {
 	}
 	
 	// 样式类型
-	if (query.type === `style` && query.key != null) {
-		const style = compilerInfo.styles[query.key]
+	if (query.type === `style` && query.index != null) {
+		const style = compilerInfo.styles[query.index]
 		loaderContext.callback(
 			null,
 			style.code,
@@ -33,8 +33,8 @@ module.exports = function selectBlock(compilerInfo, loaderContext, query) {
 	}
 	
 	// 自定义模块类型
-	if (query.type === 'custom' && query.key != null) {
-		const block = compilerInfo.customBlocks[query.key]
+	if (query.type === 'custom' && query.index != null) {
+		const block = compilerInfo.customBlocks[query.index]
 		loaderContext.callback(
 			null,
 			block.content,

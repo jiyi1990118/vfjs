@@ -15,7 +15,7 @@ exports.attrsToQuery = (attrs, langFallback) => {
   for (const name in attrs) {
     const value = attrs[name].value;
     if (!ignoreList.includes(name)) {
-      query += `&${qs.escape(name)}=${value ? qs.escape(value) : ``}`
+      query += `&${qs.escape(name)}=${value ? qs.escape(value) : `true`}`
     }
   }
   if (langFallback && !(`lang` in attrs)) {
@@ -23,3 +23,4 @@ exports.attrsToQuery = (attrs, langFallback) => {
   }
   return query
 }
+

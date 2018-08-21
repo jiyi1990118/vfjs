@@ -81,6 +81,7 @@ class VfLoaderPlugin {
 		
 		//  全局的 pitcher (负责注入模板编译器装载器和CSS post装载器)
 		const pitcher = {
+			test: /\.vf/,
 			// loader资源路径
 			loader: require.resolve('./loaders/pitcher'),
 			// 资源查询
@@ -99,10 +100,12 @@ class VfLoaderPlugin {
 			// 新注入的loader
 			pitcher,
 			// 除vf-loader规则以外所有规则
-			...clonedRules,
+			// ...clonedRules,
 			// 原有的规则
 			...rules
 		]
+		
+		// console.log(JSON.stringify(compiler.options.module.rules))
 	}
 }
 

@@ -34,6 +34,7 @@ module.exports = code => code
 
 // 这个前置加载器负责拦截所有vf块请求，将其转换为适当的请求 
 module.exports.pitch = function (remainingRequest) {
+	
 	// 获取当前loader 配置选项
 	const options = loaderUtils.getOptions(this)
 	// 缓存目录 、 缓存标识符
@@ -95,7 +96,12 @@ module.exports.pitch = function (remainingRequest) {
 	
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
+		
+		
 		const cssLoaderIndex = loaders.findIndex(isCSSLoader)
+		
+		console.log('--->>>', "::::::::::::::",loaders.length,options)
+		
 		if (cssLoaderIndex > -1) {
 			const afterLoaders = loaders.slice(0, cssLoaderIndex + 1)
 			const beforeLoaders = loaders.slice(cssLoaderIndex + 1)
@@ -104,6 +110,7 @@ module.exports.pitch = function (remainingRequest) {
 				stylePostLoaderPath,
 				...beforeLoaders
 			])
+			
 			return `import mod from ${request}; export default mod; export * from ${request}`
 		}
 	}
