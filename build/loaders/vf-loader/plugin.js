@@ -73,6 +73,8 @@ class VfLoaderPlugin {
 		// 模板装入程序? ? vf-loader-options
 		vfLoaderUse.options = vfLoaderUse.options || {}
 		
+		console.log(vfLoaderUse.options)
+		
 		// 对于每个用户规则(除了vf规则之外)，创建一个克隆规则
 		// 以*中的相应语言块为目标vf文件。
 		const clonedRules = rules

@@ -96,11 +96,9 @@ module.exports.pitch = function (remainingRequest) {
 	
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
-		
-		
 		const cssLoaderIndex = loaders.findIndex(isCSSLoader)
 		
-		console.log('--->>>', "::::::::::::::",loaders.length,options)
+		console.log('--->>>', "::::::::::::::",loaders.length,options,JSON.stringify(loaders))
 		
 		if (cssLoaderIndex > -1) {
 			const afterLoaders = loaders.slice(0, cssLoaderIndex + 1)
