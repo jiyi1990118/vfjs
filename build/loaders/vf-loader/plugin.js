@@ -73,7 +73,7 @@ class VfLoaderPlugin {
 		// 模板装入程序? ? vf-loader-options
 		vfLoaderUse.options = vfLoaderUse.options || {}
 		
-		console.log(vfLoaderUse.options)
+		// console.log(vfLoaderUse.options)
 		
 		// 对于每个用户规则(除了vf规则之外)，创建一个克隆规则
 		// 以*中的相应语言块为目标vf文件。
@@ -91,10 +91,13 @@ class VfLoaderPlugin {
 				const parsed = qs.parse(query.slice(1))
 				return parsed.vf != null
 			},
-			options: {
-				cacheDirectory: vfLoaderUse.options.cacheDirectory,
-				cacheIdentifier: vfLoaderUse.options.cacheIdentifier
-			}
+			options:  vfLoaderUse.options
+		}
+		
+		const styleLoader={
+			test: /\.vf/,
+			// loader资源路径
+			loader: require.resolve('./loaders/pitcher'),
 		}
 		
 		// 替换原有的规则

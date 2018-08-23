@@ -111,8 +111,6 @@ module.exports = function (source) {
 		options.hotReload !== false
 	)
 	
-	// template
-	// let templateImport = `var render, staticRenderFns`
 	// 获取vf文件中的template 请求的code
 	let {templateImport, templateRequestList} = genTemplateBlocksCode(
 		compilerInfo.template,
