@@ -97,7 +97,7 @@ class VfLoaderPlugin {
 		const styleLoader={
 			test: /\.vf/,
 			// loader资源路径
-			loader: require.resolve('./loaders/pitcher'),
+			use:vfLoaderUse.options.loaders['css']
 		}
 		
 		// 替换原有的规则

@@ -1,4 +1,6 @@
 const qs = require('querystring')
+// webpack 规则设置工具
+const RuleSet = require('webpack/lib/RuleSet')
 const loaderUtils = require('loader-utils')
 const hash = require('hash-sum')
 const selfPath = require.resolve('../index')
@@ -97,8 +99,8 @@ module.exports.pitch = function (remainingRequest) {
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
 		const cssLoaderIndex = loaders.findIndex(isCSSLoader)
-		
-		console.log('--->>>', "::::::::::::::",loaders.length,options,JSON.stringify(loaders))
+		const {rules} = new RuleSet(options.loaders['postcss'])
+		console.log('--->>>', "::::::::::::::",loaders.length,JSON.stringify(loaders))
 		
 		if (cssLoaderIndex > -1) {
 			const afterLoaders = loaders.slice(0, cssLoaderIndex + 1)
