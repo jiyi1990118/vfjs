@@ -3,6 +3,7 @@ const qs = require('querystring')
 const RuleSet = require('webpack/lib/RuleSet')
 const loaderUtils = require('loader-utils')
 const hash = require('hash-sum')
+const genStyleLoader = require('../utils/genStyleLoader')
 const selfPath = require.resolve('../index')
 const templateLoaderPath = require.resolve('./templateLoader')
 const stylePostLoaderPath = require.resolve('./stylePostLoader')
@@ -96,22 +97,30 @@ module.exports.pitch = function (remainingRequest) {
 		].join('!'))
 	}
 	
+	// 添加 babel loader
+	if (query.type === `script`) {
+		const request = genRequest([
+			'babel-loader',
+			...loaders,
+		])
+		return `import script from ${request}; export default script;`
+	}
+	
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
 		const cssLoaderIndex = loaders.findIndex(isCSSLoader)
-		const {rules} = new RuleSet(options.loaders['postcss'])
-		console.log('--->>>', "::::::::::::::",loaders.length,JSON.stringify(loaders))
-		
-		if (cssLoaderIndex > -1) {
+		if (cssLoaderIndex === -1) {
 			const afterLoaders = loaders.slice(0, cssLoaderIndex + 1)
 			const beforeLoaders = loaders.slice(cssLoaderIndex + 1)
 			const request = genRequest([
 				...afterLoaders,
-				stylePostLoaderPath,
+				...genStyleLoader.genStyleLoaderString(query.lang, options),
+				// stylePostLoaderPath,
 				...beforeLoaders
 			])
-			
-			return `import mod from ${request}; export default mod; export * from ${request}`
+			return `import mod from ${request}; export default mod; export * from ${request}\n
+			console.log(mod)
+				`
 		}
 	}
 	

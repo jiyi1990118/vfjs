@@ -154,9 +154,12 @@
 	}
 </script>
 
-<style lang="scss" scoped>
-.a{
-
+<style lang="css" scoped>
+body{
+    color:red;
+    display: flex;
+    box-shadow: none;
+    border:solid 1px red;
 }
 </style>
 

@@ -4,6 +4,7 @@ const hotReloadAPIPath = './vf-hot-reload-api' || JSON.stringify(require.resolve
 module.exports = function genStyleInjectionCode(loaderContext,
                                                 styles,
                                                 id,
+                                                options,
                                                 resourcePath,
                                                 stringifyRequest,
                                                 needsHotReload,

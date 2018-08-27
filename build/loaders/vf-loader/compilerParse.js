@@ -3,14 +3,17 @@ const hash = require('hash-sum');
 // node内存缓存工具 https://github.com/isaacs/node-lru-cache
 const cache = require('lru-cache')(300);
 // 资源映射生成工具
-const { SourceMapGenerator } = require('source-map');
+const {SourceMapGenerator} = require('source-map');
 // 换行分割正则
 const splitRE = /\r?\n/g;
 // 空格分割正则
 const emptyRE = /^(?:\/\/)?\s*$/;
 
+
 // sourceMap生成工具
 function generateSourceMap(filename, source, generated, sourceRoot) {
+	// 代码行数偏移
+	const offsetRowLine = source.substr(0, source.indexOf(generated)).split(splitRE).length;
 	const map = new SourceMapGenerator({
 		file: filename,
 		sourceRoot
@@ -22,7 +25,7 @@ function generateSourceMap(filename, source, generated, sourceRoot) {
 			map.addMapping({
 				source: filename,
 				original: {
-					line: index + 1,
+					line: index + offsetRowLine,
 					column: 0
 				},
 				generated: {
@@ -38,7 +41,7 @@ function generateSourceMap(filename, source, generated, sourceRoot) {
 
 // 组件解析
 module.exports = function compilerParse(options) {
-	const { source, filename = '', parse, compilerParseOptions = { pad: 'line' }, sourceRoot = process.cwd(), needMap = true } = options;
+	const {source, filename = '', parse, compilerParseOptions = {pad: 'line'}, sourceRoot = process.cwd(), needMap = true} = options;
 	// 生成缓存key标识
 	const cacheKey = hash(filename + source);
 	// 尝试从缓存中获取文件资源数据

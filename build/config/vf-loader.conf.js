@@ -7,6 +7,7 @@ const sourceMapEnabled = isProduction
 	: config.dev.cssSourceMap
 
 module.exports = {
+	usePostCSS: true,
 	cssSourceMap: sourceMapEnabled,
 	cacheBusting: config.dev.cacheBusting,
 	transformToRequire: {

@@ -144,6 +144,7 @@ module.exports = function (source) {
 			loaderContext,
 			compilerInfo.styles,
 			id,
+			options,
 			resourcePath,
 			stringifyRequest,
 			false,//needsHotReload,
@@ -196,7 +197,6 @@ module.exports = function (source) {
 	}
 	// 对外输出组件
 	code += `\nexport default component`
-	// console.log(code)
 	return code
 };
 
