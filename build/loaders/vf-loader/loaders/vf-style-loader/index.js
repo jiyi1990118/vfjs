@@ -11,6 +11,8 @@ module.exports = function () {
 
 // loader 预先处理函数 （跳跃处理）
 module.exports.pitch = function (remainingRequest) {
+	console.log(remainingRequest)
+	return `import mod from ${remainingRequest}; export default mod;`
 	// 检查目标环境
 	var isServer = this.target === 'node'
 	// 检查是否生产环境

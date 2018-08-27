@@ -1,3 +1,11 @@
+/**
+ * Created By xiyuan
+ * Author server@xiyuan.name (惜缘叛逆)
+ * DateTime 2018/8/23 下午9:11
+ * Describe 全局pitcher用于控制vf文件资源类型的loader 来控制 request路径生成
+ * MIT License http://www.opensource.org/licenses/mit-license.php
+ */
+
 const qs = require('querystring')
 // webpack 规则设置工具
 const RuleSet = require('webpack/lib/RuleSet')
@@ -7,6 +15,7 @@ const genStyleLoader = require('../utils/genStyleLoader')
 const selfPath = require.resolve('../index')
 const templateLoaderPath = require.resolve('./templateLoader')
 const stylePostLoaderPath = require.resolve('./stylePostLoader')
+const vfStyleLoaderPath = require.resolve('./vf-style-loader')
 
 // 检查是否 eslint-loader
 const isESLintLoader = l => /(\/|\\|@)eslint-loader/.test(l.path)
@@ -108,20 +117,13 @@ module.exports.pitch = function (remainingRequest) {
 	
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
-		const cssLoaderIndex = loaders.findIndex(isCSSLoader)
-		if (cssLoaderIndex === -1) {
-			const afterLoaders = loaders.slice(0, cssLoaderIndex + 1)
-			const beforeLoaders = loaders.slice(cssLoaderIndex + 1)
-			const request = genRequest([
-				...afterLoaders,
-				...genStyleLoader.genStyleLoaderString(query.lang, options),
-				// stylePostLoaderPath,
-				...beforeLoaders
-			])
-			return `import mod from ${request}; export default mod; export * from ${request}\n
-			console.log(mod)
-				`
-		}
+		const request = genRequest([
+			...genStyleLoader.genStyleLoaderString(query.lang, options),
+			...loaders,
+			// stylePostLoaderPath,
+			// vfStyleLoaderPath,
+		])
+		return `import mod from ${request}; export default mod; export * from ${request}`
 	}
 	
 	// 模板：注入模板编译器和可选缓存

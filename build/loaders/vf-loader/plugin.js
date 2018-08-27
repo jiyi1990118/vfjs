@@ -1,3 +1,10 @@
+/**
+ * Created By xiyuan
+ * Author server@xiyuan.name (惜缘叛逆)
+ * DateTime 2018/8/23 下午8:52
+ * Describe vf插件 用于添加全局pitcher 来控制vf文件资源解析
+ * MIT License http://www.opensource.org/licenses/mit-license.php
+ */
 const qs = require('querystring')
 // webpack 规则设置工具
 const RuleSet = require('webpack/lib/RuleSet')

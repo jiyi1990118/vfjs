@@ -1,8 +1,10 @@
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-  Modified by Evan You @yyx990803
-*/
+/**
+ * Created By xiyuan
+ * Author server@xiyuan.name (惜缘叛逆)
+ * DateTime 2018/8/27 下午9:55
+ * Describe javascript功能描述
+ * MIT License http://www.opensource.org/licenses/mit-license.php
+ */
 
 import listToStyles from './listToStyles'
 
