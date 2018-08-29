@@ -6,13 +6,11 @@ var path = require('path')
 var hash = require('hash-sum')
 var qs = require('querystring')
 
-module.exports = function () {
-}
+module.exports = function () {}
 
 // loader 预先处理函数 （跳跃处理）
 module.exports.pitch = function (remainingRequest) {
-	console.log(remainingRequest)
-	return `import mod from ${remainingRequest}; export default mod;`
+	
 	// 检查目标环境
 	var isServer = this.target === 'node'
 	// 检查是否生产环境
@@ -37,7 +35,7 @@ module.exports.pitch = function (remainingRequest) {
 	// css import from vf file --> component lifecycle linked
 	// style embedded in vf file --> component lifecycle linked
 	var isVf = (
-		/"vf":true/.test(remainingRequest) ||
+		/"vf":true|vf=true/.test(remainingRequest) ||
 		options.manualInject ||
 		qs.parse(this.resourceQuery.slice(1)).vf != null
 	)
@@ -47,10 +45,15 @@ module.exports.pitch = function (remainingRequest) {
 		'',
 		'// load the styles',
 		'var content = require(' + request + ');',
+		'module.exports =content',
 		// content list format is [id, css, media, sourceMap]
-		"if(typeof content === 'string') content = [[module.id, content, '']];",
-		'if(content.locals) module.exports = content.locals;'
+		//"if(typeof content === 'string') content = [[module.id, content, '']];",
+		//'if(content.locals) module.exports = content.locals;'
 	]
+	
+	
+	console.log(isVf,this.target  )
+	return shared.join('\n');
 	
 	// shadowMode is enabled in vf-cli with vf build --target web-component.
 	// exposes the same __inject__ method like SSR

@@ -30,7 +30,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		// make sure to only pass id when necessary so that we don't inject
 		// duplicate tags when multiple components import the same css file
 		const idQuery = style.scoped ? `&id=${id}` : ``
-		const query = `?vf&type=style&index=${i}${idQuery}${attrsQuery}${inheritQuery}`
+		const query = `?vf=true&type=style&index=${i}${idQuery}${attrsQuery}${inheritQuery}`
 		return stringifyRequest(src + query)
 	}
 	
@@ -93,7 +93,8 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		// 在生产环境中只需要引入css
 		styles.forEach((style, i) => {
 			const request = genStyleRequest(style, i)
-			styleImportsCode += `import style${i} from ${request}\n`
+			styleImportsCode += `import style${i} from ${request}\n
+			console.log(style${i})`
 			// 检查是否css 模块 , 则生成 注入css模块代码
 			if (style.module) genCSSModulesCode(style, request, i)
 		})

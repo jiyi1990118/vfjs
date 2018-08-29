@@ -118,11 +118,15 @@ module.exports.pitch = function (remainingRequest) {
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
 		const request = genRequest([
+			// 对处理后的代码进行注入处理
+			vfStyleLoaderPath+'?'+JSON.stringify(options),
+			// css 相关预处理loader 字符生成 （scss、less...）
 			...genStyleLoader.genStyleLoaderString(query.lang, options),
+			// 这是一个处理scoped css 转换的后加载程序
+			stylePostLoaderPath,
 			...loaders,
-			// stylePostLoaderPath,
-			// vfStyleLoaderPath,
 		])
+		
 		return `import mod from ${request}; export default mod; export * from ${request}`
 	}
 	

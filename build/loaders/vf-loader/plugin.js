@@ -101,12 +101,6 @@ class VfLoaderPlugin {
 			options:  vfLoaderUse.options
 		}
 		
-		/*const styleLoader={
-			test: /\.vf/,
-			// loader资源路径
-			use:vfLoaderUse.options.loaders['css']
-		}*/
-		
 		// 替换原有的规则
 		compiler.options.module.rules = [
 			// 新注入的loader

@@ -154,12 +154,18 @@
 	}
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+
+$color:white;
+
 body{
     color:red;
     display: flex;
     box-shadow: none;
-    border:solid 1px red;
+    border:solid 1px $color;
+    div{
+        border:solid 1px $color;
+    }
 }
 </style>
 
