@@ -1,5 +1,6 @@
 import listToStyles from './listToStyles'
 
+// style 服务端渲染
 export default function addStylesServer (parentId, list, isProduction, context) {
   if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
     context = __VUE_SSR_CONTEXT__

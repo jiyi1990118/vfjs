@@ -169,6 +169,13 @@ body{
 }
 </style>
 
+<style>
+ body{
+    background-color:green;
+ }
+
+</style>
+
 <lang>
     <div>lang</div>
 </lang>

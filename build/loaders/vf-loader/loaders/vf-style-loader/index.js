@@ -57,7 +57,7 @@ module.exports.pitch = function (remainingRequest) {
 		return shared.concat([
 			'// add CSS to Shadow Root',
 			'var add = require(' + addStylesShadowPath + ').default;',
-			'module.exports = function (shadowRoot) {',
+			'module.exports.injectStyle = function (shadowRoot) {',
 			'  add(' + id + ', content, shadowRoot)',
 			'};'
 		]).join('\n')
@@ -77,7 +77,7 @@ module.exports.pitch = function (remainingRequest) {
 				'if(module.hot) {',
 				' // 当样式改变时，更新<style>标记',
 				' if(!content.locals) {',
-				'   module.hot.accept(' + request + ', function() {console.log(">>>>>>")',
+				'   module.hot.accept(' + request + ', function() {',
 				'     var newContent = require(' + request + ');',
 				"     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];",
 				'     update(newContent);',

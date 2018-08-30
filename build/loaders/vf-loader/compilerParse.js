@@ -57,6 +57,8 @@ module.exports = function compilerParse(options) {
 		if (output.styles) {
 			output.styles.forEach(style => {
 				if (!style.src) {
+					console.log( style.code,'\n>>>>>>>>>>>>>>>>')
+					console.log(source)
 					style.map = generateSourceMap(filename, source, style.code, sourceRoot);
 				}
 			});

@@ -111,7 +111,6 @@ class VfLoaderPlugin {
 			...rules
 		]
 		
-		// console.log(JSON.stringify(compiler.options.module.rules))
 	}
 }
 

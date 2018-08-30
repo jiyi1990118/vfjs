@@ -85,7 +85,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 	
 	// 在SSR(关键CSS集合)中需要显式注入
 	// 或在阴影模式下(用于向阴影根注入)
-	// 在这些模式中，vf-style-loader会使用__inject__导出对象
+	// 在这些模式中，vf-style-loader会使用injectStyle导出对象
 	// 方法;否则我们只需要导入样式。
 	
 	// 检查是否需要显式注射
@@ -93,8 +93,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		// 在生产环境中只需要引入css
 		styles.forEach((style, i) => {
 			const request = genStyleRequest(style, i)
-			styleImportsCode += `import style${i} from ${request}\n
-			console.log(style${i});\n`
+			styleImportsCode += `import style${i} from ${request}\n`
 			// 检查是否css 模块 , 则生成 注入css模块代码
 			if (style.module) genCSSModulesCode(style, request, i)
 		})
@@ -103,7 +102,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 			const request = genStyleRequest(style, i)
 			styleInjectionCode += (
 				`var style${i} = require(${request})\n` +
-				`if (style${i}.__inject__) style${i}.__inject__(context)\n`
+				`if (style${i}.injectStyle) style${i}.injectStyle(context)\n`
 			)
 			if (style.module) genCSSModulesCode(style, request, i)
 		})

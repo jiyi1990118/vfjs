@@ -57,7 +57,7 @@ module.exports = function (source) {
 	const isServer = target === 'node'
 	// 在SSR(关键CSS集合)中需要显式注入
 	// 或在阴影模式下(用于向阴影根注入)
-	// 在这些模式中，vf-style-loader会使用__inject__导出对象
+	// 在这些模式中，vf-style-loader会使用injectStyle导出对象
 	// 方法;否则我们只需要导入样式。
 	const isShadow = !!options.shadowMode
 	// 检查是否生产模式
