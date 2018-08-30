@@ -147,8 +147,10 @@ module.exports = function (source) {
 			options,
 			resourcePath,
 			stringifyRequest,
-			false,//needsHotReload,
-			false//isServer || isShadow // needs explicit injection?
+			// 需要热重载
+			needsHotReload,
+			// 是否需要需要显式注射
+			isServer || isShadow
 		)
 	}
 	

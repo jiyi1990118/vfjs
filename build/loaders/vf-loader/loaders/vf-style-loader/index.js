@@ -31,39 +31,33 @@ module.exports.pitch = function (remainingRequest) {
 	// 获取当前loader 配置
 	var options = loaderUtils.getOptions(this) || {}
 	
-	// direct css import from js --> direct, or manually call `styles.__inject__(ssrContext)` with `manualInject` option
-	// css import from vf file --> component lifecycle linked
-	// style embedded in vf file --> component lifecycle linked
+	// 检查是否 vf 文件
 	var isVf = (
-		/"vf":true|vf=true/.test(remainingRequest) ||
+		/"vf":true/.test(remainingRequest) ||
 		options.manualInject ||
 		qs.parse(this.resourceQuery.slice(1)).vf != null
 	)
 	
 	var shared = [
-		'// style-loader: Adds some css to the DOM by adding a <style> tag',
+		'// 样式加载器:通过添加<style>标记向DOM添加一些css',
 		'',
 		'// load the styles',
 		'var content = require(' + request + ');',
-		'module.exports =content',
+		// 'module.exports =content',
 		// content list format is [id, css, media, sourceMap]
-		//"if(typeof content === 'string') content = [[module.id, content, '']];",
-		//'if(content.locals) module.exports = content.locals;'
+		"if(typeof content === 'string') content = [[module.id, content, '']];",
+		'if(content.locals) module.exports = content.locals;'
 	]
 	
 	
-	console.log(isVf,this.target  )
-	return shared.join('\n');
+	// return shared.join('\n');
 	
-	// shadowMode is enabled in vf-cli with vf build --target web-component.
-	// exposes the same __inject__ method like SSR
-	
-	// 检查是否vf组件style模块
+	// 检查是否 ShadowDOM 模式
 	if (options.shadowMode) {
 		return shared.concat([
 			'// add CSS to Shadow Root',
-			'var add = require(' + addStylesShadowPath + ').default',
-			'module.exports.__inject__ = function (shadowRoot) {',
+			'var add = require(' + addStylesShadowPath + ').default;',
+			'module.exports = function (shadowRoot) {',
 			'  add(' + id + ', content, shadowRoot)',
 			'};'
 		]).join('\n')
@@ -75,19 +69,21 @@ module.exports.pitch = function (remainingRequest) {
 			'var add = require(' + addStylesClientPath + ').default',
 			'var update = add(' + id + ', content, ' + isProduction + ', ' + JSON.stringify(options) + ');'
 		]
+		
+		// 检查是否生产环境
 		if (!isProduction) {
 			code = code.concat([
-				'// Hot Module Replacement',
+				'// 模块热加载替换',
 				'if(module.hot) {',
-				' // When the styles change, update the <style> tags',
+				' // 当样式改变时，更新<style>标记',
 				' if(!content.locals) {',
-				'   module.hot.accept(' + request + ', function() {',
+				'   module.hot.accept(' + request + ', function() {console.log(">>>>>>")',
 				'     var newContent = require(' + request + ');',
 				"     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];",
 				'     update(newContent);',
 				'   });',
 				' }',
-				' // When the module is disposed, remove the <style> tags',
+				' // 在处理模块时，删除<style>标记',
 				' module.hot.dispose(function() { update(); });',
 				'}'
 			])
@@ -99,9 +95,9 @@ module.exports.pitch = function (remainingRequest) {
 		if (isVf) {
 			// 内部vf文件 提供一个公共函数，方便可以被调用
 			return shared.concat([
-				'// add CSS to SSR context',
+				'// 向SSR上下文添加CSS',
 				'var add = require(' + addStylesServerPath + ').default',
-				'module.exports.__inject__ = function (context) {',
+				'module.exports = function (context) {',
 				'  add(' + id + ', content, ' + isProduction + ', context)',
 				'};'
 			]).join('\n')

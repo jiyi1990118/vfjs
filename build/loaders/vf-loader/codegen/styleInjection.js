@@ -94,7 +94,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		styles.forEach((style, i) => {
 			const request = genStyleRequest(style, i)
 			styleImportsCode += `import style${i} from ${request}\n
-			console.log(style${i})`
+			console.log(style${i});\n`
 			// 检查是否css 模块 , 则生成 注入css模块代码
 			if (style.module) genCSSModulesCode(style, request, i)
 		})

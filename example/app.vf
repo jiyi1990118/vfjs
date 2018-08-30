@@ -156,10 +156,10 @@
 
 <style lang="scss" scoped>
 
-$color:white;
+$color:red;
 
 body{
-    color:red;
+    color: red;
     display: flex;
     box-shadow: none;
     border:solid 1px $color;
