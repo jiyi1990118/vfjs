@@ -5,6 +5,12 @@ const config = require('../config')
 const vfLoaderConfig = require('./vf-loader.conf')
 const VfLoaderPlugin = require('../loaders/vf-loader').VfLoaderPlugin
 
+
+var MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const safeParser = require('postcss-safe-parser');
+
 function resolve(dir) {
 	return path.join(__dirname, '..', dir)
 }
@@ -86,7 +92,24 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new VfLoaderPlugin()
+		new VfLoaderPlugin(),
+		// css 提取
+		new MiniCssExtractPlugin({
+			filename: 'css/app.[name].css',
+			chunkFilename: 'css/app.[contenthash:12].css'  // use contenthash *
+		}),
+		// Compress extracted CSS. We are using this plugin so that possible
+		// duplicated CSS from different components can be deduped.
+		new OptimizeCSSPlugin({
+			cssProcessorOptions: Object.assign({
+				parser: safeParser,
+				safe: true
+			},config.build.productionSourceMap ? {
+				map: {
+					inline: true
+				}
+			} : {})
+		}),
 	],
 	node: {
 		// prevent webpack from injecting useless setImmediate polyfill because Vue

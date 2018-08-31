@@ -7,22 +7,17 @@
  */
 
 const qs = require('querystring')
-// webpack 规则设置工具
-const RuleSet = require('webpack/lib/RuleSet')
 const loaderUtils = require('loader-utils')
 const hash = require('hash-sum')
 const genStyleLoader = require('../utils/genStyleLoader')
 const selfPath = require.resolve('../index')
 const templateLoaderPath = require.resolve('./templateLoader')
 const stylePostLoaderPath = require.resolve('./stylePostLoader')
-const vfStyleLoaderPath = require.resolve('./vf-style-loader')
 
 // 检查是否 eslint-loader
 const isESLintLoader = l => /(\/|\\|@)eslint-loader/.test(l.path)
 // 检查是否 null-loader
 const isNullLoader = l => /(\/|\\|@)null-loader/.test(l.path)
-// 检查是否 css-loader
-const isCSSLoader = l => /(\/|\\|@)css-loader/.test(l.path)
 // 检查是否当前 Pitcher loader
 const isPitcher = l => l.path !== __filename
 
@@ -118,10 +113,12 @@ module.exports.pitch = function (remainingRequest) {
 	// Inject style-post-loader before css-loader for scoped CSS and trimming
 	if (query.type === `style`) {
 		const request = genRequest([
-			// 对处理后的代码进行注入处理
-			vfStyleLoaderPath+'?'+JSON.stringify(options),
 			// css 相关预处理loader 字符生成 （scss、less...）
-			...genStyleLoader.genStyleLoaderString(query.lang, options),
+			...genStyleLoader.genStyleLoaderString(query.lang, {
+				extract: options.extract,
+				usePostCSS: options.usePostCSS,
+				cssSourceMap: options.cssSourceMap,
+			}),
 			// 这是一个处理scoped css 转换的后加载程序
 			stylePostLoaderPath,
 			...loaders,

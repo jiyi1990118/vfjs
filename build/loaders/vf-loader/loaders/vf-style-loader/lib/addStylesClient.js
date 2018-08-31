@@ -2,7 +2,7 @@
  * Created By xiyuan
  * Author server@xiyuan.name (惜缘叛逆)
  * DateTime 2018/8/27 下午9:55
- * Describe javascript功能描述
+ * Describe 添加style
  * MIT License http://www.opensource.org/licenses/mit-license.php
  */
 
@@ -19,28 +19,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
 	}
 }
 
-/*
-type StyleObject = {
-  id: number;
-  parts: Array<StyleObjectPart>
-}
-
-type StyleObjectPart = {
-  css: string;
-  media: string;
-  sourceMap: ?string
-}
-*/
-
-var stylesInDom = {
-	/*
-	  [id: number]: {
-		id: number,
-		refs: number,
-		parts: Array<(obj?: StyleObjectPart) => void>
-	  }
-	*/
-}
+var stylesInDom = {}
 
 var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
 var singletonElement = null
@@ -215,7 +194,7 @@ function applyToTag(styleElement, obj) {
 	if (sourceMap) {
 		// https://developer.chrome.com/devtools/docs/javascript-debugging
 		// this makes source maps inside style tags work properly in Chrome
-		css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+		css += '\n/*# sourceURL=' + sourceMap.sources[0].replace(/[\s\S]+[\/\\]([a-z]+:)/ig,'$1') + ' */'
 		// http://stackoverflow.com/a/26603875
 		css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
 	}

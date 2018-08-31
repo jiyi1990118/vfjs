@@ -27,8 +27,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		const src = style.src || resourcePath
 		const attrsQuery = attrsToQuery(style.attrs, 'css')
 		const inheritQuery = `&${loaderContext.resourceQuery.slice(1)}`
-		// make sure to only pass id when necessary so that we don't inject
-		// duplicate tags when multiple components import the same css file
+		// 确保只在必要时传递id，这样我们就不会注入 scoped
 		const idQuery = style.scoped ? `&id=${id}` : ``
 		const query = `?vf=true&type=style&index=${i}${idQuery}${attrsQuery}${inheritQuery}`
 		return stringifyRequest(src + query)

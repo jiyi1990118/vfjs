@@ -1,5 +1,9 @@
 'use strict'
 
+const vfStyleLoaderPath = require.resolve('../loaders/vf-style-loader')
+// css 提取插件
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
 exports.cssLoaders = function (options) {
 	options = options || {}
 	
@@ -17,9 +21,9 @@ exports.cssLoaders = function (options) {
 		}
 	}
 	
-	// generate loader string to be used with extract text plugin
+	// 用于生成提取文本插件的加载器字符串
 	function generateLoaders(loader, loaderOptions) {
-		const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
+		let loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 		
 		if (loader) {
 			loaders.push({
@@ -29,12 +33,26 @@ exports.cssLoaders = function (options) {
 				})
 			})
 		}
+		
+		// vf-style-loader 配置
+		const styleLoader = {
+			loader: vfStyleLoaderPath,
+			options: Object.assign({}, options)
+		}
+		
+		// 检查是否生产环境，则启用css提取
+		if (options.extract) {
+			loaders.unshift(MiniCssExtractPlugin.loader)
+			loaders.unshift(styleLoader)
+		} else {
+			loaders.unshift(styleLoader)
+		}
+		
 		return loaders.map(function (info) {
-			return info.loader+(info.options?'?'+JSON.stringify(info.options):'')
+			return typeof info === "string" ? info : info.loader + (info.options ? '?' + JSON.stringify(info.options) : '')
 		})
 	}
 	
-	// https://vue-loader.vuejs.org/en/configurations/extract-css.html
 	return {
 		css: generateLoaders(),
 		postcss: generateLoaders(),
@@ -47,6 +65,6 @@ exports.cssLoaders = function (options) {
 }
 
 // 生成style loader request 字符
-exports.genStyleLoaderString = function (type,options) {
+exports.genStyleLoaderString = function (type, options) {
 	return exports.cssLoaders(options)[type]
 }

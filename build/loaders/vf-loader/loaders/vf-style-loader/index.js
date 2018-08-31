@@ -43,19 +43,15 @@ module.exports.pitch = function (remainingRequest) {
 		'',
 		'// load the styles',
 		'var content = require(' + request + ');',
-		// 'module.exports =content',
 		// content list format is [id, css, media, sourceMap]
 		"if(typeof content === 'string') content = [[module.id, content, '']];",
 		'if(content.locals) module.exports = content.locals;'
 	]
 	
-	
-	// return shared.join('\n');
-	
 	// 检查是否 ShadowDOM 模式
 	if (options.shadowMode) {
 		return shared.concat([
-			'// add CSS to Shadow Root',
+			'// 添加样式 ShadowDom 根元素',
 			'var add = require(' + addStylesShadowPath + ').default;',
 			'module.exports.injectStyle = function (shadowRoot) {',
 			'  add(' + id + ', content, shadowRoot)',
@@ -63,9 +59,9 @@ module.exports.pitch = function (remainingRequest) {
 		]).join('\n')
 		// 检查是否服务端渲染
 	} else if (!isServer) {
-		// on the client: dynamic inject + hot-reload
+		// 客户端:动态注入+热重加载
 		var code = [
-			'// add the styles to the DOM',
+			'// 添加style 到 dom中',
 			'var add = require(' + addStylesClientPath + ').default',
 			'var update = add(' + id + ', content, ' + isProduction + ', ' + JSON.stringify(options) + ');'
 		]

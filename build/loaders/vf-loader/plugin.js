@@ -67,8 +67,8 @@ class VfLoaderPlugin {
 		// 检查是否使用vf-loader
 		if (vfLoaderUseIndex < 0) {
 			throw new Error(
-				`[VfLoaderPlugin Error] No matching use for vf-loader is found.\n` +
-				`Make sure the rule matching .vf files include vf-loader in its use.`
+				`[VfLoaderPlugin Error] 没有匹配到 vf-loader\n` +
+				`确保匹配.vf文件的规则在使用中包含了vf-loader`
 			)
 		}
 		
@@ -79,8 +79,6 @@ class VfLoaderPlugin {
 		// 在模板加载器中通过使用ref查询来引用选项
 		// 模板装入程序? ? vf-loader-options
 		vfLoaderUse.options = vfLoaderUse.options || {}
-		
-		// console.log(vfLoaderUse.options)
 		
 		// 对于每个用户规则(除了vf规则之外)，创建一个克隆规则
 		// 以*中的相应语言块为目标vf文件。

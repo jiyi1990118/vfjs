@@ -1,5 +1,4 @@
 'use strict'
-const utils = require('../utils')
 const config = require('../config')
 const isProduction = process.env.NODE_ENV === 'production'
 const sourceMapEnabled = isProduction
@@ -7,6 +6,9 @@ const sourceMapEnabled = isProduction
 	: config.dev.cssSourceMap
 
 module.exports = {
+	// 是否提取css
+	extract:true || process.env.NODE_ENV === 'production',
+	// 启用postcss
 	usePostCSS: true,
 	cssSourceMap: sourceMapEnabled,
 	cacheBusting: config.dev.cacheBusting,
