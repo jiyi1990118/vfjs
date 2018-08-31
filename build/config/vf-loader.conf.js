@@ -12,6 +12,7 @@ module.exports = {
 	usePostCSS: true,
 	cssSourceMap: sourceMapEnabled,
 	cacheBusting: config.dev.cacheBusting,
+	// 在模版编译过程中，编译器可以将某些属性，如 src 路径，转换为require调用，以便目标资源可以由 webpack 处理.
 	transformToRequire: {
 		video: ['src', 'poster'],
 		source: 'src',
