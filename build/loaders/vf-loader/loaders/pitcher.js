@@ -110,11 +110,12 @@ module.exports.pitch = function (remainingRequest) {
 		return `import script from ${request}; export default script;`
 	}
 	
-	// Inject style-post-loader before css-loader for scoped CSS and trimming
+	// 在CSS -loader之前注入style-post-loader，用于CSS作用域和微调
 	if (query.type === `style`) {
 		const request = genRequest([
 			// css 相关预处理loader 字符生成 （scss、less...）
 			...genStyleLoader.genStyleLoaderString(query.lang, {
+				cssModule: query.module,
 				extract: options.extract,
 				usePostCSS: options.usePostCSS,
 				cssSourceMap: options.cssSourceMap,

@@ -1,4 +1,4 @@
-const hotReloadAPIPath = JSON.stringify(require.resolve('vue-hot-reload-api'))
+const hotReloadAPIPath = JSON.stringify(require.resolve('./vf-hot-reload-api'))
 
 const genTemplateHotReloadCode = (id, request) => {
   return `
@@ -11,21 +11,21 @@ const genTemplateHotReloadCode = (id, request) => {
   `.trim()
 }
 
-exports.genHotReloadCode = (id, functional, templateRequest) => {
+exports.genHotReloadCode = (id, functional, templateRequestList) => {
   return `
-/* hot reload */
-if (module.hot) {
-  var api = require(${hotReloadAPIPath})
-  api.install(require('vue'))
-  if (api.compatible) {
-    module.hot.accept()
-    if (!module.hot.data) {
-      api.createRecord('${id}', component.options)
-    } else {
-      api.${functional ? 'rerender' : 'reload'}('${id}', component.options)
+  /* hot reload */
+  if (module.hot) {
+    var api = require(${hotReloadAPIPath})
+    api.install(require('vf'))
+    if (api.compatible) {
+      module.hot.accept()
+      if (!module.hot.data) {
+        api.createRecord('${id}', component.options)
+      } else {
+        api.${functional ? 'rerender' : 'reload'}('${id}', component.options)
+      }
+      ${templateRequestList ? genTemplateHotReloadCode(id, templateRequestList) : ''}
     }
-    ${templateRequest ? genTemplateHotReloadCode(id, templateRequest) : ''}
   }
-}
   `.trim()
 }

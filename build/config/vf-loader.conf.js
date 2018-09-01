@@ -7,7 +7,7 @@ const sourceMapEnabled = isProduction
 
 module.exports = {
 	// 是否提取css
-	extract:true || process.env.NODE_ENV === 'production',
+	extract:process.env.NODE_ENV === 'production',
 	// 启用postcss
 	usePostCSS: true,
 	cssSourceMap: sourceMapEnabled,

@@ -27,6 +27,7 @@ module.exports = function (pageStr) {
 				pageModelInfo.styles.push({
 					lang: attrsMap.lang ? attrsMap.lang.value : 'css',
 					scoped: !!attrsMap.scoped,
+					module: attrsMap.module ? attrsMap.module.value || true : false,
 					code: children[0] ? children[0].text : '',
 					attrs: attrsMap
 				});

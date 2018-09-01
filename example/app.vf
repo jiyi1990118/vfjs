@@ -167,14 +167,19 @@ body{
         border:solid 1px $color;
     }
 }
+
 </style>
 
-<style>
+<style module="style">
 
 
 
  body{
-    background-color:white;
+    background-color:pink;
+ }
+
+ .testcss{
+    color: pink;
  }
 
 </style>

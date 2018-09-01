@@ -20,6 +20,8 @@ const genStylesCode = require('./codegen/styleInjection')
 const genCustomBlocksCode = require('./codegen/customBlocks')
 // 模板代码块请求生成工具
 const genTemplateBlocksCode = require('./codegen/templateBlocks')
+// 热重载代码生成
+const { genHotReloadCode } = require('./codegen/hotReload')
 // 组件构建工具路径
 const componentBuildPath = require.resolve('./runtime/componentBuild')
 // vf插件
@@ -56,9 +58,8 @@ module.exports = function (source) {
 	// 检查是否服务端渲染
 	const isServer = target === 'node'
 	// 在SSR(关键CSS集合)中需要显式注入
-	// 或在阴影模式下(用于向阴影根注入)
+	// 或在ShadowDom模式下(用于向ShadowRoot注入)
 	// 在这些模式中，vf-style-loader会使用injectStyle导出对象
-	// 方法;否则我们只需要导入样式。
 	const isShadow = !!options.shadowMode
 	// 检查是否生产模式
 	const isProduction = options.productionMode || minimize || process.env.NODE_ENV === 'production'
@@ -103,7 +104,7 @@ module.exports = function (source) {
 	const hasScoped = compilerInfo.styles.some(s => s.scoped);
 	// 标识是否启用了无上下文 render渲染
 	const hasFunctional = compilerInfo.template.master && compilerInfo.template.master.data.attrsMap.functional
-	// 标识是否使用实时开发编译
+	// 标识是否需要使用热重载开发
 	const needsHotReload = (
 		!isServer &&
 		!isProduction &&
@@ -168,6 +169,7 @@ module.exports = function (source) {
 		script,
 		// 标识是否启用了无上下文 render渲染
 		${hasFunctional ? `true` : `false`},
+		// 检查是否样式注入
 		${/injectStyles/.test(stylesCode) ? `injectStyles` : `null`},
 		// 标识 style 是否启用scope
 		${hasScoped ? JSON.stringify(id) : `null`},
@@ -189,6 +191,8 @@ module.exports = function (source) {
 		)
 	}
 	
+	
+	// 检查是否需要热重载
 	if (needsHotReload) {
 		// code += `\n` + genHotReloadCode(id, hasFunctional, templateRequestList)
 	}

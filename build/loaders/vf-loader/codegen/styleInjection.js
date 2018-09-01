@@ -1,5 +1,5 @@
 const {attrsToQuery} = require('./utils')
-const hotReloadAPIPath = './vf-hot-reload-api' || JSON.stringify(require.resolve('vf-hot-reload-api'))
+const hotReloadAPIPath = JSON.stringify(require.resolve('./vf-hot-reload-api'))
 
 module.exports = function genStyleInjectionCode(loaderContext,
                                                 styles,
@@ -9,6 +9,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
                                                 stringifyRequest,
                                                 needsHotReload,
                                                 needsExplicitInjection) {
+	
 	// 样式引入的代码
 	let styleImportsCode = ``
 	// 样式注入的代码
@@ -52,38 +53,32 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		const locals = `(style${i}.locals || style${i})`
 		const name = JSON.stringify(moduleName)
 		
-		// 检查当前是否服务器渲染
+		// 检查是否需要热重载
 		if (!needsHotReload) {
 			// 注入css模块
 			styleInjectionCode += `this[${name}] = ${locals}\n`
 		} else {
 			// 热加载模式下注入的css代码
-			styleInjectionCode += `
-        cssModules[${name}] = ${locals}
-        Object.defineProperty(this, ${name}, {
-          get: function () {
-            return cssModules[${name}]
-          }
-        })
-      `
+			styleInjectionCode += `cssModules[${name}] = ${locals}`
+			
 			// 热加载控制css的脚本
 			cssModulesHotReloadCode += `
-        module.hot && module.hot.accept([${request}], function () {
-          var oldLocals = cssModules[${name}]
-          if (oldLocals) {
-            var newLocals = require(${request})
-            if (JSON.stringify(newLocals) !== JSON.stringify(oldLocals)) {
-              cssModules[${name}] = newLocals
-              require(${hotReloadAPIPath}).rerender("${id}")
-            }
-          }
-        })
-      `
+		        module.hot && module.hot.accept([${request}], function () {
+		          var oldLocals = cssModules[${name}]
+		          console.log('------')
+		          if (oldLocals) {
+		            var newLocals = require(${request})
+		            if (JSON.stringify(newLocals) !== JSON.stringify(oldLocals)) {
+		              cssModules[${name}] = newLocals
+		              // 重新渲染
+		              // require(${hotReloadAPIPath}).rerender("${id}")
+		            }
+		          }
+		        })`
 		}
 	}
 	
 	// 在SSR(关键CSS集合)中需要显式注入
-	// 或在阴影模式下(用于向阴影根注入)
 	// 在这些模式中，vf-style-loader会使用injectStyle导出对象
 	// 方法;否则我们只需要导入样式。
 	
@@ -107,8 +102,7 @@ module.exports = function genStyleInjectionCode(loaderContext,
 		})
 	}
 	
-	// console.log(styleImportsCode, '------->')
-	// 是否非 css 模块化 非显式注射（服务端渲染）
+	// 是否非 css 模块化 并 非显式注射（服务端渲染）
 	if (!needsExplicitInjection && !hasCSSModules) {
 		return styleImportsCode
 	}
@@ -123,12 +117,13 @@ module.exports = function genStyleInjectionCode(loaderContext,
 	  ${styleInjectionCode}
 	}
 	
+	
 	${needsHotReload ? `
 	  module.hot && module.hot.dispose(function (data) {
 	    disposed = true
 	  })
 	` : ``}
 	
-	${cssModulesHotReloadCode}
+	${cssModulesHotReloadCode};
     `.trim()
 }
