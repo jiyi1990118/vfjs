@@ -47,7 +47,7 @@
 				// 值观察
 				watch: function (newData, oldData) {
 
-				}
+				}postcss-selector-parser
 			}
 		},
 		// 内部数据容器
