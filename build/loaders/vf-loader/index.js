@@ -102,7 +102,7 @@ module.exports = function (source) {
 	// 模块特征信息
 	// 是否开启style 作用域
 	const hasScoped = compilerInfo.styles.some(s => s.scoped);
-	// 标识是否启用了无上下文 render渲染
+	// 标识是否启用了函数式 render渲染
 	const hasFunctional = compilerInfo.template.master && compilerInfo.template.master.data.attrsMap.functional
 	// 标识是否需要使用热重载开发
 	const needsHotReload = (

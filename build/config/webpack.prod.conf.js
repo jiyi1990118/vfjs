@@ -56,9 +56,23 @@ const webpackConfig = merge(baseWebpackConfig, {
 			sourceMap: config.build.productionSourceMap,
 			parallel: true
 		}),
-		// generate dist index.html with correct asset hash for caching.
-		// you can customize output by editing /index.html
-		// see https://github.com/ampedandwired/html-webpack-plugin
+		/**
+		 * 参数说明：
+		 title: title值用于生成的HTML文档。
+		 filename: 将生成的HTML写入到该文件中。默认写入到index.html中。你也可以在这儿指定子目录 (eg: assets/admin.html)。
+		 template: Webpack require path 到 template中。 详情查阅 docs
+		 inject: true | 'head' | 'body' | false添加所有的静态资源（assets）到模板文件或templateContent 。当传入true或'body'时，所有javascript资源将被放置到body 元素的底部。 当传入'head'时， 所有的脚本将被放置到head元素中。
+		 favicon: 添加指定的favicon path到输出的html文件。
+		 minify: {...} | false 传入一个html-minifier 对象选项来压缩输出的html文件。
+		 hash: true | false 如果值为true，就添加一个唯一的webpack compilation hash给所有已included的 scripts 和 CSS 文件。这对缓存清除（cache busting）十分有用。
+		 cache: true | false 如果为true (默认)，只要文件被更改了就emit(发表)文件。
+		 showErrors: true | false如果为true (默认)，详细的错误信息将被写入到HTML页面。
+		 chunks:允许你只添加某些chunks (e.g. only the unit-test chunk)
+		 chunksSortMode: 在chunks被include到html文件中以前，允许你控制chunks 应当如何被排序。允许的值: 'none' | 'auto' | 'dependency' | {function} - 默认值: 'auto'。
+		 excludeChunks: 允许你跳过某些chunks (e.g. don't add the unit-test chunk)
+		 xhtml: true | false 如果为true， 将 link 标签渲染为自闭合标签, XHTML compliant。 默认是 false。
+		 see https://github.com/ampedandwired/html-webpack-plugin
+		 */
 		new HtmlWebpackPlugin({
 			filename: config.comm.filename,
 			template: config.comm.template,

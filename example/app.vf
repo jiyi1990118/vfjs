@@ -47,7 +47,7 @@
 				// 值观察
 				watch: function (newData, oldData) {
 
-				}postcss-selector-parser
+				}
 			}
 		},
 		// 内部数据容器
@@ -152,6 +152,8 @@
 			}
 		}
 	}
+
+	console.log('+++++++++++++')
 </script>
 
 <style lang="scss" scoped>
@@ -171,7 +173,6 @@ body{
 </style>
 
 <style module="style">
-
 
 
  body{
