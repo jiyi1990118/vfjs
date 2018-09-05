@@ -61,10 +61,10 @@ module.exports = function (source) {
 	
 	// 输出模版渲染接口
 	return `export default function (component) {
-		component.writeTemplate("${query.key}", {
+		component.__ProxyMethodCall__('writeTemplate',['${query.key}', {
 			domTree:${source},
 			compilerOptions:${JSON.stringify(compilerOptions)}
-		})
+		}])
 	}`
 }
 

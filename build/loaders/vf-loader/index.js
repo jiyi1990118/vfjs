@@ -21,7 +21,7 @@ const genCustomBlocksCode = require('./codegen/customBlocks')
 // 模板代码块请求生成工具
 const genTemplateBlocksCode = require('./codegen/templateBlocks')
 // 热重载代码生成
-const { genHotReloadCode } = require('./codegen/hotReload')
+const {genHotReloadCode} = require('./codegen/hotReload')
 // 组件构建工具路径
 const componentBuildPath = require.resolve('./runtime/componentBuild')
 // vf插件
@@ -141,7 +141,7 @@ module.exports = function (source) {
 	// styles
 	let stylesCode = ``
 	if (compilerInfo.styles.length) {
-		stylesCode=genStylesCode(
+		stylesCode = genStylesCode(
 			loaderContext,
 			compilerInfo.styles,
 			id,
@@ -199,7 +199,7 @@ module.exports = function (source) {
 	
 	// 设置组件源文件路径，用于调试提示
 	if (!isProduction) {
-		code += `\ncomponent.setSourceFilePath( ${JSON.stringify(rawShortFilePath)})`
+		code += `\ncomponent.__ProxyMethodCall__('setSourceFilePath',[ ${JSON.stringify(rawShortFilePath)}])`
 	}
 	// 对外输出组件
 	code += `\nexport default component`

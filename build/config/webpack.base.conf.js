@@ -48,7 +48,7 @@ module.exports = {
 	resolve: {
 		extensions: ['.js', '.vf', '.json'],
 		alias: {
-			'$vf': 'vue/dist/vf.js',
+			'$vf': 'vf/dist/vf.js',
 			'@': resolve('src'),
 		}
 	},

@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/jiyi1990118/vf#readme",
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "autoprefixer": "^9.0.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
