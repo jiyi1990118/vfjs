@@ -20,24 +20,40 @@ function getPrivate(vf) {
 }
 
 class VF {
-	constructor() {
-		console.log(arguments)
-		
+	constructor(options) {
 		// 创建 vf 应用私有组件类
 		class VFComponent extends VFComponentBase {
 		}
 		
 		// 创建 vf 私有数据映射关系
-		const index = __Vf__Storage__Index__Map__.push(this)
-		__Vf__Storage__Private__Map__.push({
+		const index = __Vf__Storage__Index__Map__.push(this);
+		
+		const Options = {
+			el: null,
 			VFComponent,
 			VFINDEX: index,
 			config: {},
 			controllers: {},
-		})
+		}
+		
+		__Vf__Storage__Private__Map__.push(Options)
 		
 		// 创建组件控制操作
 		this.componentAction = new componentAction(this);
+		
+		Object.keys(options).forEach(key => {
+			switch (key) {
+				case 'el':
+					Options.el = options[key];
+					break;
+				case 'controllers':
+					[].concat(options.controllers).forEach(this.addController.bind(this))
+					break;
+				case 'config':
+					Options.config = options.config;
+					break;
+			}
+		})
 		
 		console.log(getPrivate(this))
 	}
@@ -120,9 +136,10 @@ class componentAction {
 	
 	}
 	
-	// 给所有组件添加接口
-	addAPI() {
-	
+	// 给组件类添加原型属性（可实现全组件调用）
+	addAPI(propertyName, value) {
+		const option = getPrivate(this.VF);
+		option.VFComponent.prototype[propertyName] = value;
 	}
 }
 

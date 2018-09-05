@@ -13,7 +13,7 @@ new VF({
 	// 组件渲染位置
 	el: '',
 	// 控制器
-	controller: [
+	controllers: [
 		// 路由控制器
 		{
 			name: 'routerController',
@@ -80,7 +80,6 @@ new VF({
 		// 用户登录权限控制器
 		name: 'userJurisdictionController',
 		handle: function (config) {
-			console.log(this,config)
 			// 给当前实例所有组件绑定进入之前的生命周期
 			this.componentAction.bindHook('beforeEnter', function (to, from, next) {
 				// 权限检测
