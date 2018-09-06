@@ -27,6 +27,9 @@ class VF {
 			VFComponent,
 			// vf 内部配置
 			config: {},
+			// 挂载的组件实例
+			componentVm:null,
+			// 挂载的组件数据对象
 			mountedComponent: null,
 			// 控制器
 			controllers: {},

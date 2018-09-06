@@ -57,16 +57,14 @@ class VFComponentBase {
 	 * @param id
 	 * @param script
 	 */
-	constructor(id, script) {
+	constructor(vf, componentData) {
 		// 组件标识
-		this.__$componentId$__ = id;
+		const id = this.__$componentId$__ = componentData.id + ':' + ++componentData.useCount;
 		// 写入组件配置到组件存储中
 		ComponentStorage[id] = {
-			templates: {},
-			script: script,
-			VF: undefined
+			componentData,
+			VF: vf
 		};
-		this.exports = ComponentStorage[id];
 	}
 	
 	// 获取当前组件的vf实例
