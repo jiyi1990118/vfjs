@@ -34,16 +34,26 @@ new VF({
 				this.componentAction.bindNotify('router', {
 					// 路由更新
 					update(routerInfo, vm) {
-						// 获取路由视图组件
-						vm.$getSelectorAll('router-view').forEach((routerViewComp) => {
-							// 调用路由视图组件路由更新的接口
-							routerViewComp.routerUpdate(routerInfo, function (innerComp) {
-								// 通知router-view内部组件路由有变
-								innerComp.$notify('router:update', routerInfo.child)
-							});
-						})
+						// 定义路由前置hook
+						this.$defineHook('beforeEnter', function (fn, callback) {
+							fn(routerInfo, function next(isPass) {
+								callback(isPass || isPass === undefined)
+							})
+							
+						}).then(function () {
+							// 获取路由视图组件
+							vm.$getSelectorAll('router-view').forEach((routerViewComp) => {
+								// 调用路由视图组件路由更新的接口
+								routerViewComp.routerUpdate(routerInfo, function (innerComp) {
+									// 通知router-view内部组件路由有变
+									innerComp.$notify('router:update', routerInfo.child)
+								});
+							})
+						});
+						
 					}
 				})
+				
 				
 				/*监听当前文档hash改变。（当前hash模式的地址）*/
 				window.addEventListener('hashchange', function (e) {
@@ -68,6 +78,9 @@ new VF({
 	
 	
 	],
+	render(fn) {
+		fn(app)
+	}
 	
 })
 // 写入路由配置
@@ -90,5 +103,5 @@ new VF({
 	})
 	// 启动 vf 应用
 	.start((render) => {
-		render(app || '#app')
+		render( '#app')
 	})

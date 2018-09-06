@@ -1,3 +1,21 @@
+/**
+ * 实例对比
+ * @param L 表示左表达式
+ * @param R 表示右表达式
+ * @returns {boolean}
+ */
+function isInstance(L, R) {//L 表示左表达式，R 表示右表达式
+	var O = R.prototype;// 取 R 的显示原型
+	L = L.__proto__;// 取 L 的隐式原型
+	while (true) {
+		if (L === null)
+			return false;
+		if (O === L)// 这里重点：当 O 严格等于 L 时，返回 true
+			return true;
+		L = L.__proto__;
+	}
+}
+
 function getType(value) {
 	if (isElement(value)) return 'element';
 	var type = typeof (value);
@@ -177,4 +195,5 @@ module.exports = {
 	isEmpty: isEmpty,
 	isTypedArray: isTypedArray,
 	equals: equals,
+	isInstance: isInstance,
 }
