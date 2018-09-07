@@ -49,7 +49,7 @@ class VFComponentData {
 	}
 }
 
-// vf 组件 class 类
+// vf 组件基础 class 类
 class VFComponentBase {
 	
 	/**
@@ -87,7 +87,7 @@ class VFComponentBase {
 	
 	}
 	
-	// 定义组件自定义的生命周期
+	// 定义/埋点组件自定义的生命周期(实际就是调用指定的生命周期)
 	$defineHook(name, fn) {
 		const vfOptions = getVfPrivate(this.$getVf());
 		// vf中组件公共的hook

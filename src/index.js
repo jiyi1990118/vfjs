@@ -11,9 +11,9 @@ const {VFComponentBase, VFComponentData} = require('./engine/component');
 // vf 实例读取与存储
 const {getVfPrivate, saveVfPrivate} = require('./privateStorage');
 // vf应用渲染工具
-const render = require('./engine/component/render');
+const {componentRender} = require('./engine/component/render');
 // 数据类型处理工具
-const {isInstance} = require('./inside/lib/type')
+const {isInstance, isPromise, getType} = require('./inside/lib/type')
 
 class VF {
 	constructor(options) {
@@ -28,11 +28,13 @@ class VF {
 			// vf 内部配置
 			config: {},
 			// 挂载的组件实例
-			componentVm:null,
+			componentVm: null,
 			// 挂载的组件数据对象
 			mountedComponent: null,
 			// 控制器
 			controllers: {},
+			// 公共的全局组件
+			components: {},
 			// 组件公共的选项
 			componetCommOption: {
 				hooks: {},
@@ -72,23 +74,22 @@ class VF {
 	// 启动vf框架
 	start(option) {
 		const Options = getVfPrivate(this);
-		// 获取数据类型
-		const argsType = {}.toString.call(option).match(/object\s+(html\w+?(Element)|(\w+))/i);
-		switch (argsType[2] || argsType[1]) {
-			case 'Function':
+		// 判断数据类型
+		switch (getType(option)) {
+			case 'function':
 				option((option) => {
 					this.start(option);
 				});
 				return this;
 				break;
 			// 渲染替代的元素·
-			case 'Element':
+			case 'element':
 			// 字符串选择器
-			case 'String':
+			case 'string':
 				Options.el = option;
 				break;
 			// option | VfComp
-			case 'Object':
+			case 'object':
 				if (isInstance(option, VFComponentData)) {
 					Options.mountedComponent = option;
 				} else {
@@ -98,8 +99,19 @@ class VF {
 			default:
 			
 		}
-		// 渲染处理
-		render(this, Options)
+		
+		// vf应用挂载的组件数据
+		const mountedComponent = Options.mountedComponent;
+		
+		// 检查是否异步组件
+		if (isInstance(mountedComponent, VFComponentData)) {
+			vfStart(this, Options, mountedComponent)
+		} else if (isPromise(mountedComponent)) {
+			mountedComponent.then((outComp) => {
+				vfStart(this, Options, outComp.default)
+			})
+		}
+		
 		return this
 	}
 	
@@ -112,6 +124,12 @@ class VF {
 			controller.handle.bind(this)(option.config);
 		})
 		return this;
+	}
+	
+	// 组件注册
+	registerComponent(name, component) {
+		const components = getVfPrivate(this).components;
+		components[name] = component;
 	}
 }
 
@@ -187,20 +205,37 @@ function parseHandleVfOptions(Options, options, vf) {
 				break;
 			case 'render':
 				options.render(function (option) {
-					if (isInstance(option, VFComponentData)) {
+					if (isInstance(option, VFComponentData) || isPromise(option, Promise)) {
 						Options.mountedComponent = option;
 					} else {
 					
 					}
 				})
 				break;
+			// 挂载的组件数据
 			case 'mountComponent':
-				if (isInstance(options.mountComponent, VFComponentData)) {
+				if (isInstance(options.mountComponent, VFComponentData) || isPromise(options.mountComponent, Promise)) {
 					Options.mountedComponent = options.mountComponent;
 				} else {
 				
 				}
 				break;
+			case 'components':
+				Object.assign(Options.components, options.components);
+				break;
 		}
 	})
+}
+
+/**
+ * vf应用启动
+ * @param vf
+ * @param Options
+ * @param mountedComponent
+ */
+function vfStart(vf, Options, mountedComponent) {
+	// 关联对应的vf组件实例
+	Options.componentVm = new Options.VFComponent(this, mountedComponent);
+	// 组件渲染
+	componentRender(Options.componentVm, Options.el)
 }

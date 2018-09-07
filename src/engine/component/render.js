@@ -5,12 +5,32 @@
  * Describe vf渲染
  * MIT License http://www.opensource.org/licenses/mit-license.php
  */
-// vf 实例读取与存储
-const {getVfPrivate} = require('../../privateStorage');
 
-module.exports = function (vf, options) {
-	options = options || getVfPrivate(vf);
-	// 关联对应的vf组件实例
-	options.componentVm = new options.VFComponent(vf, options.mountedComponent)
-	console.log(vf, options)
+// 数据类型处理工具
+const {isInstance, getType} = require('../../inside/lib/type')
+
+module.exports = {
+	/**
+	 * vf组件渲染
+	 * @param vfComponent 组件实例
+	 * @param replaceNode 替换的节点
+	 */
+	componentRender(vfComponent, replaceNode) {
+		let placeholderNode;
+		switch (getType(replaceNode)) {
+			case 'undefined':
+				break;
+			// 是否dom选择器
+			case 'string':
+				placeholderNode = document.querySelector(replaceNode)
+				break;
+			case 'object':
+				
+				break;
+			case 'element':
+				placeholderNode = replaceNode;
+				break;
+		}
+		console.log(vfComponent,placeholderNode)
+	}
 }

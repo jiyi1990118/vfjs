@@ -20,7 +20,8 @@ function getType(value) {
 	if (isElement(value)) return 'element';
 	var type = typeof (value);
 	if (type == 'object') {
-		type = {}.toString.call(value).match(/object\s+(\w*)/)[1].toLocaleLowerCase()
+		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
+		type = type[2] || type[1]
 	}
 	return type;
 };
@@ -190,10 +191,14 @@ module.exports = {
 	isHTMLDocument: function (data) {
 		return data instanceof HTMLDocument;
 	},
+	isPromise: function (data) {
+		return isInstance(data, Promise)
+	},
 	isDefined: isDefined,
 	isElement: isElement,
 	isEmpty: isEmpty,
 	isTypedArray: isTypedArray,
 	equals: equals,
+	getType: getType,
 	isInstance: isInstance,
 }

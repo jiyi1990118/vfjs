@@ -48,12 +48,12 @@ module.exports = function vnode(tag, data, children, text, elm, callbackFn) {
 		key: key,
 		// 数据容器
 		data: data || {},
-		// 上下文环境 ( 模型数据、过滤器、组件、指令、动态计算属性 )
-		context: {},
+		// 内部上下文环境 ( 组件内部调用的方法、数据 )
+		context: undefined,
 		// 子Vdom
 		children: children||[],
 		// 父虚拟节点
-		parentVnode: null
+		parentVnode: undefined
 	};
 	
 	const Vnode = new $vnode(conf);

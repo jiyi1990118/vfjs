@@ -1,13 +1,18 @@
 import VF from '../src';
 
-import app from './app.vf';
+// import app from './app.vf';
 
 console.time();
+const App=import('./app.vf');
 
-console.log('app.vf out ---->>>', app)
 
-console.timeEnd();
-
+App.then(function (App) {
+	console.timeEnd();
+	const app=App.default;
+	
+	console.log('app.vf out ---->>>', app)
+	
+})
 
 new VF({
 	// 组件渲染位置
@@ -79,7 +84,10 @@ new VF({
 	
 	],
 	render(fn) {
-		fn(app)
+		fn(App)
+	},
+	components: {
+		custom: import('../src')
 	}
 	
 })
@@ -103,5 +111,6 @@ new VF({
 	})
 	// 启动 vf 应用
 	.start((render) => {
-		render( '#app')
+		render('#app')
 	})
+
