@@ -7,7 +7,10 @@
  */
 
 // 数据类型处理工具
-const {isInstance, getType} = require('../../inside/lib/type')
+const {getType} = require('../../inside/lib/type')
+
+// vf 实例读取
+const {getComponent} = require('../../privateStorage');
 
 module.exports = {
 	/**
@@ -31,6 +34,10 @@ module.exports = {
 				placeholderNode = replaceNode;
 				break;
 		}
-		console.log(vfComponent,placeholderNode)
+		
+		
+		
+		
+		console.log(vfComponent, placeholderNode,getComponent(vfComponent))
 	}
 }

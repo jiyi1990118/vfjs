@@ -240,7 +240,7 @@ function parseHandleVfOptions(Options, options, vf) {
  */
 function vfStart(vf, Options, mountedComponent) {
 	// 关联对应的vf组件实例
-	Options.componentVm = new Options.VFComponent(this, mountedComponent);
+	Options.componentVm = new Options.VFComponent(vf, mountedComponent);
 	// 组件渲染
 	componentRender(Options.componentVm, Options.mount)
 }

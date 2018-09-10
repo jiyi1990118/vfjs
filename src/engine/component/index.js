@@ -7,10 +7,7 @@
  */
 
 // vf 实例读取
-const {getVfPrivate} = require('../../privateStorage');
-
-// 组件存储
-const ComponentStorage = {};
+const {getVfPrivate, getComponent, saveComponent} = require('../../privateStorage');
 
 // 组件数据类
 class VFComponentData {
@@ -61,15 +58,14 @@ class VFComponentBase {
 		// 组件标识
 		const id = this.__$componentId$__ = componentData.id + ':' + ++componentData.useCount;
 		// 写入组件配置到组件存储中
-		ComponentStorage[id] = {
-			componentData,
+		saveComponent(id, Object.assign({
 			VF: vf
-		};
+		}, componentData))
 	}
 	
 	// 获取当前组件的vf实例
 	$getVf() {
-		return ComponentStorage[this.__$componentId$__].VF;
+		return getComponent(this.__$componentId$__).VF;
 	}
 	
 	// 获取当前组件中匹配到的所有元素
@@ -92,7 +88,7 @@ class VFComponentBase {
 		const vfOptions = getVfPrivate(this.$getVf());
 		// vf中组件公共的hook
 		const componetCommHooks = vfOptions ? vfOptions.componetCommOption.hooks[name] || [] : [];
-		const script = ComponentStorage[this.__$componentId$__].script;
+		const script = getComponent(this.__$componentId$__).script;
 		// 当前组件私有hook
 		const hook = (script.hooks || {})[name];
 		const hooks = hook ? componetCommHooks.concat(hook) : componetCommHooks;
