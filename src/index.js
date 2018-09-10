@@ -22,7 +22,7 @@ class VF {
 		}
 		
 		const Options = {
-			el: null,
+			mount: null,
 			// vf组件中的组件类
 			VFComponent,
 			// vf 内部配置
@@ -71,6 +71,11 @@ class VF {
 		return this;
 	}
 	
+	// 挂载元素
+	mount(el) {
+		getVfPrivate(this).mount = el;
+	}
+	
 	// 启动vf框架
 	start(option) {
 		const Options = getVfPrivate(this);
@@ -86,7 +91,7 @@ class VF {
 			case 'element':
 			// 字符串选择器
 			case 'string':
-				Options.el = option;
+				Options.mount = option;
 				break;
 			// option | VfComp
 			case 'object':
@@ -194,8 +199,8 @@ module.exports = VF;
 function parseHandleVfOptions(Options, options, vf) {
 	Object.keys(options).forEach(key => {
 		switch (key) {
-			case 'el':
-				Options.el = options[key];
+			case 'mount':
+				Options.mount = options[key];
 				break;
 			case 'controllers':
 				[].concat(options.controllers).forEach(vf.addController.bind(vf))
@@ -237,5 +242,5 @@ function vfStart(vf, Options, mountedComponent) {
 	// 关联对应的vf组件实例
 	Options.componentVm = new Options.VFComponent(this, mountedComponent);
 	// 组件渲染
-	componentRender(Options.componentVm, Options.el)
+	componentRender(Options.componentVm, Options.mount)
 }

@@ -3,12 +3,12 @@ import VF from '../src';
 // import app from './app.vf';
 
 console.time();
-const App=import('./app.vf');
+const App = import('./app.vf');
 
 
 App.then(function (App) {
 	console.timeEnd();
-	const app=App.default;
+	const app = App.default;
 	
 	console.log('app.vf out ---->>>', app)
 	
@@ -16,7 +16,7 @@ App.then(function (App) {
 
 new VF({
 	// 组件渲染位置
-	el: '',
+	mount: '',
 	// 控制器
 	controllers: [
 		// 路由控制器
@@ -87,7 +87,8 @@ new VF({
 		fn(App)
 	},
 	components: {
-		custom: import('../src')
+		// 按需加载组件
+		customComp: () => import('../src')
 	}
 	
 })
