@@ -58,9 +58,11 @@ class VFComponentBase {
 		// 组件标识
 		const id = this.__$componentId$__ = componentData.id + ':' + ++componentData.useCount;
 		// 写入组件配置到组件存储中
-		saveComponent(id, Object.assign({
-			VF: vf
-		}, componentData))
+		saveComponent(id, {
+			VF: vf,
+			context: null,
+			source: componentData
+		})
 	}
 	
 	// 获取当前组件的vf实例

@@ -19,6 +19,9 @@ module.exports = {
 	 * @param replaceNode 替换的节点
 	 */
 	componentRender(vfComponent, replaceNode) {
+		// 组件资源
+		const source=getComponent(vfComponent).source;
+		
 		let placeholderNode;
 		switch (getType(replaceNode)) {
 			case 'undefined':
@@ -37,7 +40,17 @@ module.exports = {
 		
 		
 		
+		// 渲染
+		/*
+		*
+	    * patch(placeholderNode,vfComponent|vnode)
+		*
+		*
+		*
+		*
+		* */
 		
-		console.log(vfComponent, placeholderNode,getComponent(vfComponent))
+		
+		console.log(vfComponent, placeholderNode,source)
 	}
 }

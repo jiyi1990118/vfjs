@@ -6,9 +6,6 @@
  * MIT License http://www.opensource.org/licenses/mit-license.php
  */
 
-// 数据类型处理工具
-const {isInstance} = require('./inside/lib/type')
-
 // vf实例存储索引映射
 const __Vf__Storage__Index__Map__ = [];
 // vf实例对应的私有数据
