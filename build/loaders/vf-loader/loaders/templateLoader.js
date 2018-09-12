@@ -21,7 +21,7 @@ module.exports = function (source) {
 	// allow using custom compiler via options
 	const compiler = options.compiler //|| require('vue-template-compiler')
 	const compilerOptions = Object.assign({}, options.compilerOptions, {
-		scopeId: query.scoped ? `scope-${id}` : null,
+		scopedId: query.scoped ? `scope-${id}` : null,
 		comments: query.comments
 	})
 	
