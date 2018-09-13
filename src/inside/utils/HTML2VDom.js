@@ -28,10 +28,11 @@ function str2vdom(htmlStr, mode) {
 	
 	HTMLParser(string.HTMLDecode(htmlStr), {
 		// 标签节点起始
-		start: function (tagName, attrs, unary) {
+		start: function (tagName, attrs, unary, isHtmlTag) {
 			
 			nowStruct = {
 				tag: tagName,
+				isHtmlTag: isHtmlTag,
 				data: {
 					attrsMap: attrs.reduce(function (attrs, current) {
 						
@@ -83,16 +84,10 @@ function str2vdom(htmlStr, mode) {
 							const syntaxStruct = syntaxTree(current.value);
 							
 							// 检查内向外定义的语法表达式（一定需要可赋值的数据,如标识变量、成员变量）
-							if (attrInfo.isInner) {
-								
-								// 同时检查是否也是外向内,其他除 标识量外，一律当执行表达式
-								if (attrInfo.isOuter) {
-									
-									// 检查是否可写
-									if (!syntaxStruct.info.canWrite) {
-										log.warn('模板中' + tagName + '上属性', current.name, '双向数据语法错误 ' + current.value + ' 只能是可赋值变量或成员属性！')
-									}
-								}
+							// 同时检查是否也是外向内,其他除 标识量外，一律当执行表达式
+							// 检查是否可写
+							if (attrInfo.isInner && attrInfo.isOuter && !syntaxStruct.info.canWrite) {
+								log.warn('模板中' + tagName + '上属性', current.name, '双向数据语法错误 ' + current.value + ' 只能是可赋值变量或成员属性！')
 							}
 							// 保存语法解析结构
 							attrInfo.syntaxStruct = syntaxStruct;

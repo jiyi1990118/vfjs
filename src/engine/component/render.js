@@ -10,14 +10,15 @@
 const {getType} = require('../../inside/lib/type')
 
 // 虚拟节点处理
-const {$componentNode} = require('./vnode')
+const {componentGenNode} = require('./vnode')
 
 /**
  * vf组件渲染
- * @param vfComponent 组件实例
+ * @param componentData 组件数据实例
  * @param replaceNode 替换的节点
+ * @param vf 当前组件所属应用实例
  */
-function componentRender(vfComponent, replaceNode) {
+function componentRender(componentData, replaceNode, vf) {
 	
 	let placeholderNode;
 	switch (getType(replaceNode)) {
@@ -36,12 +37,9 @@ function componentRender(vfComponent, replaceNode) {
 	}
 	
 	// vf组件转换成虚拟节点
-	new $componentNode(vfComponent)
-	
-	// 渲染
-	/*
-	* 根据 组件数据进行 重组成 虚拟dom结构 并创建对应的 dom元素
-	* */
+	componentGenNode(componentData, vf).then(function (vnode) {
+		
+	})
 }
 
 module.exports = {

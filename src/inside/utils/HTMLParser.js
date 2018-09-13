@@ -24,6 +24,27 @@ module.exports = (function () {
 			style: /^([\s\S]*?)<\/style[^>]*>/i
 		};
 	
+	// 检查是否html标签
+	function isHtmlTag(tagName) {
+		switch (true) {
+			case empty[tagName]:
+				
+				break;
+			case block[tagName]:
+				
+				break;
+			case inline[tagName]:
+				
+				break;
+			case closeSelf[tagName]:
+				
+				break;
+			default:
+				return false;
+		}
+		return true;
+	}
+	
 	
 	function makeMap(str) {
 		var obj = {}, items = str.split(",");
@@ -173,7 +194,7 @@ module.exports = (function () {
 				}
 				
 				if (handler.start)
-					handler.start(casePreservedTagName, attrs, unary);
+					handler.start(casePreservedTagName, attrs, unary, isHtmlTag(casePreservedTagName));
 			}
 		}
 		

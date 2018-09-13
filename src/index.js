@@ -105,17 +105,8 @@ class VF {
 			
 		}
 		
-		// vf应用挂载的组件数据
-		const mountedComponent = Options.mountedComponent;
-		
-		// 检查是否异步组件
-		if (isInstance(mountedComponent, VFComponentData)) {
-			vfStart(this, Options, mountedComponent)
-		} else if (isPromise(mountedComponent)) {
-			mountedComponent.then((outComp) => {
-				vfStart(this, Options, outComp.default)
-			})
-		}
+		// 组件渲染
+		componentRender(Options.mountedComponent, Options.mount, this)
 		
 		return this
 	}
@@ -134,7 +125,8 @@ class VF {
 	// 组件注册
 	registerComponent(name, component) {
 		const components = getVfPrivate(this).components;
-		components[name] = component;
+		// 组件名称大写转为横岗小写
+		components[name.replace(/[A-Z]/g, str => '-' + str.toLowerCase())] = component;
 	}
 }
 
@@ -230,17 +222,4 @@ function parseHandleVfOptions(Options, options, vf) {
 				break;
 		}
 	})
-}
-
-/**
- * vf应用启动
- * @param vf
- * @param Options
- * @param mountedComponent
- */
-function vfStart(vf, Options, mountedComponent) {
-	// 关联对应的vf组件实例
-	Options.componentVm = new Options.VFComponent(vf, mountedComponent);
-	// 组件渲染
-	componentRender(Options.componentVm, Options.mount)
 }
