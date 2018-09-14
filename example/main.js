@@ -88,7 +88,7 @@ new VF({
 	},
 	components: {
 		// 按需加载组件
-		customComp: () => import('../src')
+		userAge: () => import('./userAge.vf')
 	}
 	
 })

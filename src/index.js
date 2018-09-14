@@ -22,6 +22,9 @@ class VF {
 		}
 		
 		const Options = {
+			// vf应用实例
+			vf: this,
+			// 挂载的元素
 			mount: null,
 			// vf组件中的组件类
 			VFComponent,
@@ -51,6 +54,11 @@ class VF {
 		
 		// 解析处理vf实例选项
 		parseHandleVfOptions(Options, options, this)
+	}
+	
+	// 获取组件原型
+	getComponentClass() {
+		return getVfPrivate(this).VFComponent;
 	}
 	
 	// 配置vf应用
@@ -217,8 +225,11 @@ function parseHandleVfOptions(Options, options, vf) {
 				
 				}
 				break;
+			// 组件注册
 			case 'components':
-				Object.assign(Options.components, options.components);
+				Object.keys(options.components).forEach(function (name) {
+					Options.components[name.replace(/[A-Z]/g, str => '-' + str.toLowerCase())] = options.components[name];
+				})
 				break;
 		}
 	})
