@@ -147,7 +147,7 @@ function genCompChildrenVnode(domTree, source, vfCommOption) {
 			
 			// 创建 dom元素/组件节点
 			return vnode(tagName, Object.assign({
-				key: index,
+				index: index,
 				// 作用域id
 				scopedId: source.id,
 				// 节点类型
@@ -157,7 +157,7 @@ function genCompChildrenVnode(domTree, source, vfCommOption) {
 		} else {
 			// 创建文本节点
 			return vnode('', Object.assign({
-				key: index,
+				index: index,
 			}, nodeData.data))
 		}
 	})

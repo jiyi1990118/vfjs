@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul>
-            <li for="(info,index) in userList" :ref="'user-list-'+index">{{info.name}}</li>
+            <li for="(info,index) in userList" :ref="'user-list-'+index">age:{{info.name}}</li>
         </ul>
         <userAge info="userAgeSort" ref="userAge">
             <div slot="content" slot-scope="userAge" ref="userAgeSlot">{{userAge}}</div>

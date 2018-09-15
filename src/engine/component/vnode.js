@@ -1,5 +1,8 @@
 // 数据类型处理工具
 const {isPromise} = require('../../inside/lib/type')
+// dom处理工具
+const domApi = require('./htmlDomApi');
+
 
 //虚拟节点对象
 class $vnode {
@@ -12,6 +15,27 @@ class $vnode {
 		
 		// 给子元素关联父元素
 		this.resetChildrenParent();
+		
+		// 创建当前节点dom  节点类型 0 文字  1 常规元素  2 组件 3 常规元素 + 指令  4 组件 + 指令
+		switch (conf.data.nodeType) {
+			case 0:
+				this.elm = domApi.createTextNode('')
+				break;
+			case 1:
+				this.elm = domApi.createElement(this.tag)
+				break;
+			case 2:
+				
+				
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				
+				break;
+			
+		}
 		
 	}
 	
@@ -44,18 +68,16 @@ class $vnode {
 }
 
 //虚拟节点构造
-function vnode(tag, data, children, parentNode, text, elm, callbackFn) {
+function vnode(tag, data, children, parentNode, elm, callbackFn) {
 	
-	var key = data === undefined ? undefined : data.key;
+	var index = data === undefined ? undefined : data.index;
 	var conf = {
 		// 标签
 		tag: tag,
 		// dom元素
 		elm: elm,
-		// 文本内容
-		text: text,
-		// 键值标识
-		key: key,
+		// 索引标识
+		index: index,
 		// 数据容器
 		data: data || {
 			// 节点类型 0 文字  1 常规元素  2 组件
