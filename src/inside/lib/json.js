@@ -3,14 +3,7 @@
  */
 "use strict";
 
-function getType(value) {
-	var type = typeof (value);
-	if (type == 'object') {
-		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
-		type = type[2] || type[1]
-	}
-	return type;
-};
+const {getType} = require('./type')
 
 //把对象转换成json字符串
 function stringify(obj) {

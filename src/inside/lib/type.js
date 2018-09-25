@@ -17,13 +17,7 @@ function isInstance(L, R) {//L 表示左表达式，R 表示右表达式
 }
 
 function getType(value) {
-	if (isElement(value)) return 'element';
-	var type = typeof (value);
-	if (type == 'object') {
-		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
-		type = type[2] || type[1]
-	}
-	return type;
+	return {}.toString.call(value).slice(8,-1).toLocaleLowerCase().replace(/html(body)?/,'');
 };
 
 function isType(type) {

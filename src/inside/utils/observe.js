@@ -39,7 +39,7 @@ function uid() {
  * @returns {*}
  */
 function getType(data) {
-    return {}.toString.call(data).match(/object\s+(\w*)/)[1]
+    return {}.toString.call(data).slice(8,-1)
 }
 
 /**
