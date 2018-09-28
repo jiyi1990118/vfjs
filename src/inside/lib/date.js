@@ -3,7 +3,7 @@
  */
 "use strict";
 
-var log=require('../log/log');
+var log=require('../utils/log');
 
 /**
  * 时间转换

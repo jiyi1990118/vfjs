@@ -5,7 +5,7 @@
 
 "use strict";
 
-var log=require('../../../inside/log/log');
+var log=require('../../inside/utils/log');
 
 var observer = require('../../../inside/lib/observer');
 

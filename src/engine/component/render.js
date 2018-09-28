@@ -18,6 +18,9 @@ const {getType, isInstance, isPromise} = require('../../inside/lib/type')
 // 虚拟节点处理
 const {vnode} = require('./vnode')
 
+// 日志工具
+const log=require('../../inside/utils/log');
+
 /**
  * vf组件渲染
  * @param componentData 组件数据实例
@@ -97,7 +100,6 @@ function componentGenNode(componentData, vf, compName, key) {
 	componentData = typeof componentData === "function" ? componentData() : componentData;
 	
 	return new Promise(function (resolve, reject) {
-		
 		// 检查是否异步组件
 		if (isInstance(componentData, VFComponentData)) {
 			componentLoaded(componentData, compName, componentClass, vf, key, resolve, reject)
@@ -110,10 +112,7 @@ function componentGenNode(componentData, vf, compName, key) {
 		}
 		
 	})
-	
-	
 }
-
 
 /**
  * 生成虚拟节点
@@ -150,13 +149,14 @@ function genCompChildrenVnode(domTree, source, vfCommOption) {
 				index: index,
 				// 作用域id
 				scopedId: source.id,
-				// 节点类型
-				nodeType: component ? 2 : 1,
+				// 节点类型 0 文字  1 常规元素  2 组件
+				nodeType: 1,
 			}, nodeData.data), genCompChildrenVnode(nodeData.children, source, vfCommOption))
 			
 		} else {
 			// 创建文本节点
 			return vnode('', Object.assign({
+				nodeType: 0,
 				index: index,
 			}, nodeData.data))
 		}

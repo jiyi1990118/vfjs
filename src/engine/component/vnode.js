@@ -1,5 +1,6 @@
 // 数据类型处理工具
 const {isPromise} = require('../../inside/lib/type')
+
 // dom处理工具
 const domApi = require('./htmlDomApi');
 
