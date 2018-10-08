@@ -47,7 +47,9 @@ function componentRender(componentData, replaceNode, vf) {
 	
 	// vf组件转换成虚拟节点
 	componentGenNode(componentData, vf).then(function (vnode) {
-		console.log(vnode, ':::::')
+		console.log(vnode, ':::::',placeholderNode);
+		placeholderNode.parentNode.replaceChild(vnode.getElement(),placeholderNode);
+		delete vnode.containFrag;
 	})
 }
 

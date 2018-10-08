@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="test-flag">
         <ul>
             <li for="(info,index) in userList" :ref="'user-list-'+index">age:{{info.name}}</li>
         </ul>
