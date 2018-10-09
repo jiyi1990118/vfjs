@@ -91,6 +91,7 @@
 			userAgeSort: {
 				// 依赖的数据 (用户列表)
 				depend: ['userList'],
+				// 输出
 				export(userList) {
 					// 验证可以支持promise
 					const promise = new Promise((resolve, reject) => {
@@ -99,6 +100,10 @@
 						}).join('=>')) : reject('空列表');
 					});
 					return promise
+				},
+				// 输入
+				import(val){
+
 				}
 			}
 		},
