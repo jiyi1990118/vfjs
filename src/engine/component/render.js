@@ -55,7 +55,7 @@ function componentRender(componentData, replaceNode, vf) {
 
 
 // 组件加载完毕后的处理
-function componentLoaded(componentData, compName, componentClass, vf, key, resolve, reject) {
+function componentLoaded(componentData, compName, componentClass, vf, key, resolve) {
 	// 组件实例
 	const componentInstance = new componentClass(vf, componentData)
 	
@@ -99,8 +99,12 @@ function componentGenNode(componentData, vf, compName, key) {
 	// 当前应用组件类
 	const componentClass = vf.getComponentClass();
 	
+	// 获取组件 script 输出的数据
 	componentData = typeof componentData === "function" ? componentData() : componentData;
 	
+	// 此处预留 上下文生成 及其他处理
+	
+	// 对外组件统一输出成Promise
 	return new Promise(function (resolve, reject) {
 		// 检查是否异步组件
 		if (isInstance(componentData, VFComponentData)) {

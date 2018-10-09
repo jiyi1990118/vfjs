@@ -1,9 +1,11 @@
 // 数据类型处理工具
 const {isPromise} = require('../../inside/lib/type')
 
+// 日志工具
+const log=require('../../inside/utils/log');
+
 // dom处理工具
 const domApi = require('./htmlDomApi');
-
 
 //虚拟节点对象
 class $vnode {
@@ -41,28 +43,23 @@ class $vnode {
 		}
 	}
 	
-	// 节点克隆
-	clone() {
-	
-	}
-	
 	// 初始化子级元素关联父元素
 	initChildrenParent() {
+		// dom临时容器
 		this.containFrag = document.createDocumentFragment();
-		
 		// 遍历子元素并关联上容器元素
 		(this.children || []).forEach((vnode, index) => {
+			vnode.parentNode = this;
 			// 检查当前子节点是否 异步节点
 			if (isPromise(vnode)) {
 				vnode.then((Vnode) => {
 					if (this.children.indexOf(vnode) === -1) return
 					Vnode.parentNode = this;
-					this.children[index] = Vnode;
 					// 在指定的索引位置添加节点
 					this.insertIndexChild(index, Vnode);
+					this.children[index] = Vnode;
 				})
 			} else {
-				vnode.parentNode = this;
 				this.containFrag.appendChild(vnode.getElement());
 			}
 			
@@ -70,20 +67,30 @@ class $vnode {
 	}
 	
 	// 添加子元素
-	appendChild(vnode) {
-		// 检查当前子节点是否 异步节点
-		if (isPromise(vnode)) {
-			let index = this.children.length;
-			vnode.then((Vnode) => {
-				if (!this.inChildren(vnode, Vnode)) return
-				Vnode.parentNode = this;
-				this.children[index] = Vnode;
-				this.getElement().appendChild(Vnode.getElement())
-			})
-		} else {
+	appendChild(...vnode) {
+		let children = this.children;
+		let index = children.length - 1;
+		
+		[...vnode].forEach((vnode, cindex) => {
+			//  从之前节点中移除
+			this.removeInParentChildrenData(vnode);
 			vnode.parentNode = this;
-		}
-		this.children.push(vnode)
+			// 检查当前子节点是否 异步节点
+			if (isPromise(vnode)) {
+				let _index = cindex + index;
+				vnode.then((Vnode) => {
+					if (!this.inChildren(vnode, Vnode)) return
+					Vnode.parentNode = this;
+					this.replaceIndexChild(_index, Vnode)
+					this.children[_index] = Vnode;
+				})
+			} else {
+				this.getElement().appendChild(vnode.getElement())
+			}
+		});
+		
+		// 添加到子节点数据中
+		children.push(...vnode);
 	}
 	
 	// 删除元素
@@ -93,6 +100,7 @@ class $vnode {
 				// 移除真实元素
 				this.getElement().removeChild(vnode.getElement())
 			}
+			delete vnode.parentNode;
 			//  从之前节点中移除
 			vnode.removeInParentChildrenData();
 		})
@@ -100,14 +108,12 @@ class $vnode {
 	
 	// 在已有节点前添加新的节点
 	insertBefore(...vnode) {
-	
-	}
-	
-	// 在子节点指定的索引位置添加节点
-	insertIndexChild(index, vnode) {
-		let children = this.children;
+		let parentVnode = this.parentNode;
+		if (!parentVnode) log.warn('节点未关联~', this)
+		let children = parentVnode.children;
 		let len = children.length;
 		let nextUseVnode = undefined;
+		let index = children.indexOf(this);
 		
 		// 获取下一个可用节点（已生成dom）
 		while (index < len && !nextUseVnode) {
@@ -115,43 +121,68 @@ class $vnode {
 			nextUseVnode = !isPromise(vnode) && vnode;
 		}
 		
-		const parentNode = this.getElement();
+		// 添加到同级兄弟节点数据中
+		children.splice(index, 0, ...vnode);
+		
+		// 获取父元素真实DOM节点
+		const parentNode = parentVnode.getElement();
 		
 		if (nextUseVnode) {
-			parentNode.insertBefore(vnode.getElement(), nextUseVnode.getElement())
+			vnodeInsertHandle(this, index, function (vnode) {
+				parentNode.insertBefore(vnode.getElement(), nextUseVnode.getElement())
+			}, ...vnode);
 		} else {
-			parentNode.appendChild(vnode.getElement())
+			vnodeInsertHandle(this, index, function (vnode) {
+				parentNode.appendChild(vnode.getElement())
+			}, ...vnode);
+		}
+	}
+	
+	// 在子节点指定的索引位置添加节点
+	insertIndexChild(index, ...vnode) {
+		let children = this.children;
+		let len = children.length;
+		let nextUseVnode = undefined;
+		// 获取父元素真实DOM节点
+		const parentNode = this.getElement();
+		
+		// 获取下一个可用节点（已生成dom）
+		while (index < len && !nextUseVnode) {
+			let vnode = children[index++];
+			nextUseVnode = !isPromise(vnode) && vnode;
 		}
 		
-		//  从之前节点中移除
-		vnode.removeInParentChildrenData();
+		children.splice(index, 0, ...vnode);
 		
-		// 改变父节点关联
-		vnode.parentNode = this;
-		
-		children.splice(index, 0, vnode);
+		if (nextUseVnode) {
+			vnodeInsertHandle(this, index, function (vnode) {
+				parentNode.insertBefore(vnode.getElement(), nextUseVnode.getElement())
+			}, ...vnode);
+		} else {
+			vnodeInsertHandle(this, index, function (vnode) {
+				parentNode.appendChild(vnode.getElement())
+			}, ...vnode);
+		}
 	}
 	
 	// 替换指定索引位置元素
-	replaceIndexChild(index, vnode) {
-		let oldVnode = this.children[index];
-		let parentNode = this.getElement();
-		let oldElm;
+	replaceIndexChild(index, ...vnode) {
+		let children = this.children;
+		let oldVnode = children[index];
 		
-		// 对dom进行操作
-		if (!isPromise(oldVnode) && (oldElm = oldVnode.getElement())) {
-			parentNode.replaceChild(vnode.getElement(), oldElm)
-		} else {
-			this.children.splice(index, 1);
-			this.insertIndexChild(index, vnode)
+		if (oldVnode) {
+			isPromise(oldVnode) || this.getElement().removeChild(oldVnode.getElement())
+			delete oldVnode.parentNode;
 		}
-		vnode.parentNode=this;
-		return this.children[index] = vnode;
+		// 添加到同级兄弟节点数据中
+		children.splice(index, 1);
+		// 进行元素添加
+		this.insertIndexChild(index, ...vnode);
 	}
 	
 	// 返回指定节点之后紧跟的节点，在相同的树层级中
 	nextSibling() {
-		if(!this.parentNode)console.warn('节点未关联~',this)
+		if (!this.parentNode) log.warn('节点未关联~', this)
 		const siblingNode = this.parentNode.children;
 		const positionIndex = siblingNode.indexOf(this);
 		return positionIndex === -1 ? undefined : siblingNode[positionIndex + 1];
@@ -189,18 +220,19 @@ class $vnode {
 		
 		// 添加对应的
 		[...vnode].forEach((vnode, cindex) => {
+			//  从之前节点中移除
+			this.removeInParentChildrenData(vnode);
+			vnode.parentNode = this;
 			// 检查当前子节点是否 异步节点
 			if (isPromise(vnode)) {
-				let index = cindex + index;
+				let _index = cindex + index;
 				vnode.then((Vnode) => {
 					if (!this.inChildren(vnode, Vnode)) return
 					Vnode.parentNode = this;
-					this.children[index] = Vnode;
-					
-					this.replaceIndexChild(index, Vnode)
+					this.replaceIndexChild(_index, Vnode)
+					this.children[_index] = Vnode;
 				})
 			} else {
-				vnode.parentNode = this;
 				containFrag.appendChild(vnode.getElement())
 			}
 		})
@@ -210,10 +242,12 @@ class $vnode {
 	}
 	
 	// 从子元素中移除对应节点数据
-	removeInParentChildrenData() {
+	removeInParentChildrenData(vnode) {
+		vnode = vnode || this;
+		let parentNode = vnode.parentNode;
 		//  从之前节点中移除
-		if (this.parentNode) {
-			let oldParentChild = this.parentNode.children;
+		if (parentNode) {
+			let oldParentChild = parentNode.children;
 			oldParentChild.splice(oldParentChild.indexOf(vnode), 1)
 		}
 	}
@@ -265,4 +299,25 @@ function vnode(tag, data, children, parentNode, elm, callbackFn) {
 module.exports = {
 	$vnode,
 	vnode
+}
+
+// 进行节点添加遍历处理
+function vnodeInsertHandle(This, index, fn, ...vnode) {
+	[...vnode].forEach((vnode, cindex) => {
+		//  从之前节点中移除
+		This.removeInParentChildrenData(vnode);
+		vnode.parentNode = This;
+		// 检查当前子节点是否 异步节点
+		if (isPromise(vnode)) {
+			let _index = cindex + index;
+			vnode.then((Vnode) => {
+				if (!This.inChildren(vnode, Vnode)) return
+				Vnode.parentNode = This;
+				This.replaceIndexChild(_index, Vnode)
+				This.children[_index] = Vnode;
+			})
+		} else {
+			fn(vnode);
+		}
+	})
 }
